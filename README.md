@@ -46,6 +46,8 @@ python3 scripts/build_vocab.py
 
 ## 同步到 GitHub
 
+仓库：https://github.com/ankhwyf/english-vocab
+
 ```sh
 git add -A
 git commit -m "更新生词库"
@@ -55,7 +57,11 @@ git push
 换电脑：
 
 ```sh
-git clone https://github.com/<你的账号>/english-vocab.git
+git clone git@github.com:ankhwyf/english-vocab.git
 cd english-vocab
 open practice.html
 ```
+
+用 https 克隆也行（`https://github.com/ankhwyf/english-vocab.git`），但推送需要 token；
+这台机器走的是 SSH，密钥在 `WorkBuddy/2026-09-30-17-09-49/.ssh/id_ed25519`，
+仓库里用 `core.sshCommand` 指向它。换机器时在那个 GitHub 账号下再加一把公钥即可。
