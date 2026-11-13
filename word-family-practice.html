@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>英语练习 · 词族三课</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --ink:#1b1f24; --sub:#5b6470;
+    --line:#e3e6ea; --blue:#3563e9; --blue-soft:#eef2fe;
+    --ok:#0f7a3d; --ok-soft:#e9f7ef; --ok-line:#12a150;
+    --bad:#b42318; --bad-soft:#fdecea; --bad-line:#e5484d;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:16px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .bar{
+    position:sticky; top:0; z-index:10; background:rgba(255,255,255,.92);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
+  }
+  .bar-in{max-width:760px; margin:0 auto; padding:12px 20px 10px}
+  .row{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .title{font-weight:650; font-size:15px; letter-spacing:.2px}
+  .meta{margin-left:auto; display:flex; gap:10px; align-items:baseline; font-size:13px; color:var(--sub)}
+  .meta b{font-size:15px; color:var(--ink); font-variant-numeric:tabular-nums}
+  .meta #pct{color:#8b94a1; padding-left:8px; border-left:1px solid var(--line)}
+  .progress{height:6px; background:#eceff3; border-radius:99px; margin:10px 0 8px; overflow:hidden}
+  .progress i{display:block; height:100%; width:0; background:linear-gradient(90deg,#4f7cf0,#12a150); border-radius:99px; transition:width .25s ease}
+  .acts{display:flex; gap:8px; flex-wrap:wrap}
+  button{
+    font:inherit; font-size:13.5px; padding:7px 14px; border-radius:9px; cursor:pointer;
+    border:1px solid var(--line); background:#fff; color:var(--ink);
+  }
+  button:hover{border-color:#c9cfd8; background:#fafbfc}
+  button.primary{background:var(--blue); border-color:var(--blue); color:#fff}
+  button.primary:hover{background:#2b55d4}
+  button.ghost{color:var(--sub)}
+  main{max-width:760px; margin:0 auto; padding:26px 20px 60px}
+  .part{margin-bottom:34px; scroll-margin-top:104px}
+  .part h2{font-size:17px; margin:0 0 4px; letter-spacing:.3px}
+  .part .pdesc{margin:0 0 14px; color:var(--sub); font-size:13.5px}
+  .card{
+    background:var(--card); border-radius:var(--radius); padding:15px 18px 13px;
+    margin-bottom:12px; border-left:4px solid transparent;
+    box-shadow:0 1px 2px rgba(16,24,40,.05), 0 2px 6px rgba(16,24,40,.05);
+  }
+  .card.ok{border-left-color:var(--ok-line)}
+  .card.bad{border-left-color:var(--bad-line)}
+  .qhead{display:flex; gap:10px; align-items:flex-start}
+  .no{
+    flex:0 0 26px; height:26px; border-radius:50%; background:#eef1f5; color:var(--sub);
+    font-size:12.5px; font-weight:600; display:grid; place-items:center; margin-top:2px;
+    font-variant-numeric:tabular-nums;
+  }
+  .card.ok .no{background:var(--ok-soft); color:var(--ok)}
+  .card.bad .no{background:var(--bad-soft); color:var(--bad)}
+  .stem{flex:1; min-width:0}
+  .stem .zh{color:var(--sub); font-size:13.5px; display:block; margin-top:2px}
+  .hint{display:inline-block; margin-left:6px; padding:1px 7px; border-radius:6px;
+        background:#f1f3f6; color:#556; font-size:12.5px; white-space:nowrap}
+  .opts{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 0 36px}
+  .opt{
+    font:inherit; font-size:15.5px; padding:7px 18px; border-radius:10px;
+    border:1.5px solid var(--line); background:#fff; cursor:pointer;
+  }
+  .opt:hover{border-color:#b9c6e6; background:#fbfcff}
+  .opt.sel{border-color:var(--blue); background:var(--blue-soft)}
+  .opt.correct{border-color:var(--ok-line); background:var(--ok-soft); color:var(--ok); font-weight:600}
+  .opt.wrong{border-color:var(--bad-line); background:var(--bad-soft); color:var(--bad)}
+  .fillwrap{margin:12px 0 0 36px; display:flex; gap:8px; flex-wrap:wrap}
+  input.fill{
+    flex:1 1 320px; max-width:520px; min-width:200px; font:inherit; font-size:15.5px; padding:9px 12px;
+    border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--ink);
+  }
+  input.fill:focus{outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(53,99,233,.12)}
+  input.fill.ok{border-color:var(--ok-line); background:var(--ok-soft)}
+  input.fill.bad{border-color:var(--bad-line); background:var(--bad-soft)}
+  .fb{margin:10px 0 0 36px; font-size:13.8px; line-height:1.7}
+  .fb.ok{color:var(--ok)}
+  .fb.bad{color:var(--bad)}
+  .fb .ans{font-weight:600}
+  .fb .ex{display:block; color:var(--sub); margin-top:3px}
+  footer{max-width:760px; margin:0 auto; padding:0 20px 50px; color:var(--sub); font-size:12.5px}
+  .empty{color:var(--sub)}
+  @media (max-width:560px){
+    .bar-in{padding:10px 14px 8px}
+    main{padding:18px 12px 40px}
+    .card{padding:14px 14px 12px}
+    .opts,.fillwrap,.fb{margin-left:0}
+    .opt{flex:1 1 auto; text-align:center}
+    .meta{font-size:12px}
+  }
+  @media print{
+    .bar,.acts,footer{display:none}
+    body{background:#fff}
+    .card{break-inside:avoid; box-shadow:none; border:1px solid #ddd}
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="row">
+      <div class="title">英语练习 · 词族三课</div>
+      <div class="meta">
+        <span>得分 <b id="score">0</b> / <span id="total">28</span></span>
+        <span id="pct">0%</span>
+      </div>
+    </div>
+    <div class="progress"><i id="barfill"></i></div>
+    <div class="row acts">
+      <button id="btnCheckAll" class="primary">检查全部</button>
+      <button id="btnRedo">重做错题</button>
+      <button id="btnReset" class="ghost">清空重做</button>
+    </div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  三课来自 Gum on the Rug · Look at My Pen · Look at It Go。答案不区分大小写和标点，拼写必须正确。
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var PARTS = [
+    {
+      name: "一、词汇：选一选",
+      desc: "pin 是针、pen 是笔、pan 是平底锅、pad 是便签本。四个词只差一两个字母，看清楚再选。",
+      items: [
+        { id:"v1", type:"choice", stem:"I write with my ______.", options:["pin","pen","pan","pad"], answers:["pen"],
+          explain:"写东西用笔：pen。pin 是别针，pan 是锅，pad 是便签本。" },
+        { id:"v2", type:"choice", stem:"A ______ can pop a balloon.", options:["pin","pen","pan","pad"], answers:["pin"],
+          explain:"能把气球扎破的是针：pin。" },
+        { id:"v3", type:"choice", stem:"Mom cooks eggs in a ______.", options:["pin","pen","pan","pad"], answers:["pan"],
+          explain:"煎蛋用平底锅：pan。深锅煮汤才是 pot。" },
+        { id:"v4", type:"choice", stem:"哪个词读 /pɪn/？", options:["pen","pin"], answers:["pin"],
+          explain:"/ɪ/ 短而紧，是 pin；/e/ 口型更开，是 pen。" },
+        { id:"v5", type:"choice", stem:"哪个词读 /pen/？", options:["pen","pin"], answers:["pen"],
+          explain:"pen 的 /e/ 下巴要放低，别和 pin 混。" },
+        { id:"v6", type:"choice", stem:"The balloon is ______. It is not small.", options:["big","red","sad","fun"], answers:["big"],
+          explain:"not small 就说明是 big（大的）。" },
+        { id:"v7", type:"choice", stem:"My pen is lost. I am ______.", options:["big","red","sad","fun"], answers:["sad"],
+          explain:"东西丢了会难过：sad。注意要说 I am sad，不能只说 I sad。" },
+        { id:"v8", type:"choice", stem:"Do not ______ go!", options:["let","get","put","tug"], answers:["let"],
+          explain:"let go 是固定搭配，松手、放开。" }
+      ]
+    },
+    {
+      name: "二、语法：改一改",
+      desc: "直接把改写后的整句写进去。句末不用打句号，大小写随意。",
+      items: [
+        { id:"g1", type:"fill", stem:"It is big.", sub:"改成一般疑问句", answers:["Is it big"],
+          explain:"把 be 动词 is 提到主语 it 前面：Is it big?" },
+        { id:"g2", type:"fill", stem:"He can get it.", sub:"改成否定句",
+          answers:["He cannot get it","He can not get it","He can't get it"],
+          explain:"can 后面直接加 not：He cannot get it，也可以写 He can't get it。" },
+        { id:"g3", type:"fill", stem:"My pen is in the pan.", sub:"对 in the pan 提问",
+          answers:["Where is my pen"],
+          explain:"问地点用 Where，后面接 is + 主语：Where is my pen?" },
+        { id:"g4", type:"fill", stem:"I am sad.", sub:"改成否定句", answers:["I am not sad"],
+          explain:"be 动词否定直接在 am 后面加 not，不用 do。" },
+        { id:"g5", type:"fill", stem:"It is red. It is big.", sub:"用 and 合并成一句",
+          answers:["It is red and big","It is big and red"],
+          explain:"两个形容词共用一个 It is：It is red and big." },
+        { id:"g6", type:"fill", stem:"Do not let ______ go!", sub:"填代词，指那个气球", answers:["it"],
+          explain:"气球是物，用 it；代词要夹在 let 和 go 中间。" },
+        { id:"g7", type:"fill", stem:"Let ______ help you.", sub:"填 I 的宾格", answers:["me"],
+          explain:"let 后面跟宾格：me，不是 I。" },
+        { id:"g8", type:"fill", stem:"Kodi rubs the gum. The gum will not come out.", sub:"用 but 合并成一句",
+          answers:["Kodi rubs the gum, but it will not come out","Kodi rubs the gum but it will not come out"],
+          explain:"but 连接两个相反的结果；第二句的 the gum 用 it 代替更自然。" },
+        { id:"g9", type:"fill", stem:"I see it. It is red.", sub:"用 that 合并成一句",
+          answers:["I see that it is red"],
+          explain:"that 引导宾语从句，后面跟陈述句语序：that it is red。" },
+        { id:"g10", type:"fill", stem:"Can he get it? I do not know.", sub:"用 if 合并成一句",
+          answers:["I do not know if he can get it"],
+          explain:"if 表示「是否」，从句要用陈述语序：if he can get it，不能写 if can he get it。" }
+      ]
+    },
+    {
+      name: "三、翻译：仿写",
+      desc: "用学过的词和句型造新句子，不必和课文一模一样。括号里是提示词。",
+      items: [
+        { id:"t1", type:"fill", stem:"我的书在地毯上。", sub:"提示：on",
+          answers:["My book is on the rug","The book is on the rug"],
+          explain:"「在……上面」用 on；书是单数，用 is。" },
+        { id:"t2", type:"fill", stem:"我的笔不在锅里。", sub:"提示：not",
+          answers:["My pen is not in the pan","My pen isn't in the pan"],
+          explain:"否定状态用 be + not，不是 do not。" },
+        { id:"t3", type:"fill", stem:"别让它跑掉！", sub:"提示：let it go",
+          answers:["Do not let it go","Don't let it go"],
+          explain:"否定祈使句 Do not + 动词原形；代词 it 夹在 let 和 go 中间。" },
+        { id:"t4", type:"fill", stem:"看它飞！", sub:"提示：look at it go",
+          answers:["Look at it go"],
+          explain:"look at + 宾语 + 动词原形，go 不用 goes。" },
+        { id:"t5", type:"fill", stem:"他能拿到球吗？", sub:"提示：can",
+          answers:["Can he get the ball","Can he get the ball?"],
+          explain:"can 提到主语前，动词用原形：Can he get...?" },
+        { id:"t6", type:"fill", stem:"这块口香糖在地毯上。", sub:"提示：on",
+          answers:["The gum is on the rug"],
+          explain:"gum 不可数，前面不加 a；用 the 表示「那块」。" },
+        { id:"t7", type:"fill", stem:"把地毯拉到浴缸那儿去。", sub:"提示：tug ... to ...",
+          answers:["Tug the rug to the tub"],
+          explain:"tug 是朝某个方向拉，所以用 to，不是 in。" },
+        { id:"t8", type:"fill", stem:"我看不见我的笔了。", sub:"提示：do not see",
+          answers:["I do not see my pen","I don't see my pen"],
+          explain:"否定实义动词用 do not，后面接原形 see。" },
+        { id:"t9", type:"fill", stem:"气球又大又红。", sub:"提示：and",
+          answers:["The balloon is big and red","It is big and red","The balloon is red and big"],
+          explain:"两个形容词用 and 连接，共用一个 is。" },
+        { id:"t10", type:"fill", stem:"帮我一把。", sub:"提示：give ... a hand",
+          answers:["Give me a hand"],
+          explain:"give sb sth 双宾语；人称代词用宾格 me。" }
+      ]
+    }
+  ];
+
+  var KEY = "wordfamily-practice-v1";
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch(e){ state = {}; }
+
+  var ALL = [];
+  PARTS.forEach(function(p){ p.items.forEach(function(q){ ALL.push(q); }); });
+
+  function norm(s){
+    return String(s == null ? "" : s)
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[.,!?;:]/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  }
+  function isCorrect(q, val){
+    var v = norm(val);
+    if (!v) return false;
+    for (var i=0;i<q.answers.length;i++){
+      if (norm(q.answers[i]) === v) return true;
+    }
+    return false;
+  }
+  function save(){
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
+  }
+
+  var app = document.getElementById("app");
+
+  function el(tag, cls){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    return e;
+  }
+
+  function renderCard(q, idx){
+    var st = state[q.id] || null;
+    var judged = st && typeof st.ok === "boolean";
+
+    var card = el("div", "card" + (judged ? (st.ok ? " ok" : " bad") : ""));
+
+    var head = el("div", "qhead");
+    var no = el("div", "no");
+    no.textContent = String(idx);
+    var stem = el("div", "stem");
+    var s = el("div");
+    s.textContent = q.stem;
+    stem.appendChild(s);
+
+    if (q.sub){
+      var sub = el("span", "zh");
+      var t = q.sub.replace(/^提示：/, "");
+      if (/^提示/.test(q.sub)){
+        var hint = el("span", "hint");
+        hint.textContent = t;
+        sub.appendChild(document.createTextNode("用上 "));
+        sub.appendChild(hint);
+      } else {
+        sub.textContent = q.sub;
+      }
+      stem.appendChild(sub);
+    }
+    head.appendChild(no);
+    head.appendChild(stem);
+    card.appendChild(head);
+
+    if (q.type === "choice"){
+      var wrap = el("div", "opts");
+      q.options.forEach(function(opt){
+        var b = el("button", "opt");
+        b.type = "button";
+        b.textContent = opt;
+        if (st && st.value === opt){
+          b.classList.add("sel");
+          if (judged) b.classList.add(st.ok ? "correct" : "wrong");
+        }
+        if (judged && !st.ok && q.answers.indexOf(opt) >= 0) b.classList.add("correct");
+        b.addEventListener("click", function(){
+          var ok = isCorrect(q, opt);
+          state[q.id] = { value: opt, ok: ok };
+          save(); redrawCard(card, q, idx); updateStats();
+        });
+        wrap.appendChild(b);
+      });
+      card.appendChild(wrap);
+
+    } else {
+      var fw = el("div", "fillwrap");
+      var input = el("input", "fill");
+      input.type = "text";
+      input.placeholder = "在这里写英文";
+      input.autocomplete = "off";
+      input.spellcheck = false;
+      input.dataset.qid = q.id;
+      input.value = st ? (st.value || "") : "";
+      if (judged) input.classList.add(st.ok ? "ok" : "bad");
+
+      var btn = el("button", "primary");
+      btn.type = "button";
+      btn.textContent = judged ? "重判" : "检查";
+
+      function judge(){
+        var v = input.value.trim();
+        if (!v) { input.focus(); return; }
+        state[q.id] = { value: v, ok: isCorrect(q, v) };
+        save(); redrawCard(card, q, idx); updateStats();
+      }
+      btn.addEventListener("click", judge);
+      input.addEventListener("keydown", function(e){
+        if (e.key === "Enter"){ e.preventDefault(); judge(); }
+      });
+      input.addEventListener("input", function(){
+        if (state[q.id] && typeof state[q.id].ok === "boolean"){
+          delete state[q.id]; save();
+          card.classList.remove("ok", "bad");
+          input.classList.remove("ok", "bad");
+          var fb = card.querySelector(".fb");
+          if (fb) fb.remove();
+          updateStats();
+        }
+      });
+      fw.appendChild(input);
+      fw.appendChild(btn);
+      card.appendChild(fw);
+    }
+
+    if (judged){
+      var fb = el("div", "fb " + (st.ok ? "ok" : "bad"));
+      if (st.ok){
+        fb.appendChild(document.createTextNode("✓ 正确"));
+      } else {
+        fb.appendChild(document.createTextNode("✗ 再想想　答案："));
+        var ans = el("span", "ans");
+        ans.textContent = q.answers[0];
+        fb.appendChild(ans);
+      }
+      if (q.explain){
+        var ex = el("span", "ex");
+        ex.textContent = q.explain;
+        fb.appendChild(ex);
+      }
+      card.appendChild(fb);
+    }
+
+    return card;
+  }
+
+  function redrawCard(oldCard, q, idx){
+    var fresh = renderCard(q, idx);
+    oldCard.parentNode.replaceChild(fresh, oldCard);
+  }
+
+  var order = {};
+  function build(){
+    app.innerHTML = "";
+    var n = 0;
+    PARTS.forEach(function(part){
+      var sec = el("section", "part");
+      var h = el("h2"); h.textContent = part.name; sec.appendChild(h);
+      var d = el("p", "pdesc"); d.textContent = part.desc; sec.appendChild(d);
+      part.items.forEach(function(q){
+        n += 1;
+        order[q.id] = n;
+        sec.appendChild(renderCard(q, n));
+      });
+      app.appendChild(sec);
+    });
+    updateStats();
+  }
+
+  function updateStats(){
+    var answered = 0, right = 0;
+    ALL.forEach(function(q){
+      var st = state[q.id];
+      if (st && typeof st.ok === "boolean"){
+        answered += 1;
+        if (st.ok) right += 1;
+      }
+    });
+    var total = ALL.length;
+    document.getElementById("score").textContent = right;
+    document.getElementById("total").textContent = total;
+    document.getElementById("pct").textContent = Math.round(answered / total * 100) + "%";
+    document.getElementById("barfill").style.width = (answered / total * 100) + "%";
+  }
+
+  document.getElementById("btnCheckAll").addEventListener("click", function(){
+    app.querySelectorAll("input.fill").forEach(function(inp){
+      var id = inp.dataset.qid;
+      if (!id) return;
+      if (state[id] && typeof state[id].ok === "boolean") return;
+      var v = inp.value.trim();
+      if (!v) return;
+      var q = null;
+      for (var i=0;i<ALL.length;i++){ if (ALL[i].id === id){ q = ALL[i]; break; } }
+      if (!q) return;
+      state[id] = { value: v, ok: isCorrect(q, v) };
+    });
+    save(); build();
+  });
+
+  document.getElementById("btnRedo").addEventListener("click", function(){
+    ALL.forEach(function(q){
+      var st = state[q.id];
+      if (st && st.ok === false) delete state[q.id];
+    });
+    save(); build();
+  });
+
+  document.getElementById("btnReset").addEventListener("click", function(){
+    if (!confirm("清空全部作答，重新开始？")) return;
+    state = {}; save(); build();
+  });
+
+  build();
+})();
+</script>
+</body>
+</html>

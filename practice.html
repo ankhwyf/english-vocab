@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>生词练习 · 240 词</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --ink:#1b1f24; --sub:#5b6470; --line:#e3e6ea;
+    --blue:#3563e9; --blue-soft:#eef2fe;
+    --ok:#0f7a3d; --ok-soft:#e9f7ef; --ok-line:#12a150;
+    --bad:#b42318; --bad-soft:#fdecea; --bad-line:#e5484d;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:16px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .bar{position:sticky; top:0; z-index:10; background:rgba(255,255,255,.94); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+  .bar-in{max-width:720px; margin:0 auto; padding:12px 20px}
+  .row{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .title{font-weight:650; font-size:15px}
+  .meta{margin-left:auto; font-size:13px; color:var(--sub); font-variant-numeric:tabular-nums}
+  main{max-width:720px; margin:0 auto; padding:24px 20px 70px}
+  select{
+    font:inherit; font-size:14px; padding:7px 10px; border-radius:9px;
+    border:1.5px solid var(--line); background:#fff; color:var(--ink); max-width:100%;
+  }
+  button{font:inherit; cursor:pointer; border:1px solid var(--line); background:#fff; color:var(--ink);
+    border-radius:10px; padding:9px 16px; font-size:14.5px}
+  button:hover{border-color:#c9cfd8; background:#fbfcfd}
+  button.primary{background:var(--blue); border-color:var(--blue); color:#fff}
+  button.primary:hover{background:#2b55d4}
+  .card{background:var(--card); border-radius:16px; padding:26px 24px; box-shadow:0 1px 2px rgba(16,24,40,.05),0 3px 10px rgba(16,24,40,.06)}
+  .q{font-size:34px; font-weight:650; letter-spacing:.3px; text-align:center; margin:8px 0 6px; word-break:break-word}
+  .q.zh{font-size:28px; font-weight:600}
+  .sub{text-align:center; color:var(--sub); font-size:13px; margin-bottom:18px}
+  .opts{display:grid; gap:10px; margin-top:6px}
+  .opt{
+    text-align:left; padding:14px 16px; border-radius:12px; border:1.5px solid var(--line);
+    background:#fff; font-size:16.5px; cursor:pointer; line-height:1.5;
+  }
+  .opt:hover{border-color:#b9c6e6; background:#fbfcff}
+  .opt.correct{border-color:var(--ok-line); background:var(--ok-soft); color:var(--ok); font-weight:600}
+  .opt.wrong{border-color:var(--bad-line); background:var(--bad-soft); color:var(--bad)}
+  .opt .num{display:inline-block; width:22px; color:#9aa3ae; font-size:13px; font-variant-numeric:tabular-nums}
+  .fb{margin-top:14px; font-size:14.5px; color:var(--sub); text-align:center}
+  .fb b{color:var(--ink)}
+  .progress{display:flex; gap:6px; margin:18px 0 0; justify-content:center}
+  .dot{width:8px; height:8px; border-radius:50%; background:#dfe3e8}
+  .dot.done{background:var(--blue)}
+  .dot.ok{background:var(--ok-line)}
+  .dot.bad{background:var(--bad-line)}
+  .center{text-align:center}
+  .big{font-size:44px; font-weight:700; margin:6px 0}
+  .stat{color:var(--sub); font-size:14px}
+  .empty{color:var(--sub); font-size:14px; text-align:center; padding:20px}
+  .wrongs{text-align:left; margin:18px 0 0; max-height:280px; overflow:auto}
+  .wrongs div{padding:8px 0; border-bottom:1px dashed var(--line); font-size:14.5px}
+  .wrongs div:last-child{border-bottom:none}
+  .wrongs i{color:var(--sub); font-style:normal; font-size:13px; margin-left:6px}
+  .actions{display:flex; gap:10px; justify-content:center; margin-top:22px; flex-wrap:wrap}
+  .modes{display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; align-items:center}
+  .modes button{padding:7px 12px; font-size:13px; border-radius:8px; white-space:nowrap; flex:0 0 auto}
+  #scope{margin-left:auto}
+  .modes button.on{background:var(--blue-soft); border-color:var(--blue); color:var(--blue); font-weight:600}
+  .hintbar{color:var(--sub); font-size:12.5px; margin-top:10px; text-align:center}
+  @media (max-width:560px){
+    #scope{margin-left:0; flex:1 1 100%; width:100%}
+  }
+  @media (max-width:520px){
+    .bar-in{padding:10px 14px}
+    main{padding:16px 12px 50px}
+    .card{padding:20px 16px}
+    .q{font-size:27px}
+    .q.zh{font-size:22px}
+    .opt{font-size:15.5px; padding:12px 14px}
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="row">
+      <div class="title">生词练习</div>
+      <div class="meta" id="meta">—</div>
+    </div>
+    <div class="modes" id="modes">
+      <button data-mode="en2zh" class="on">英 → 中</button>
+      <button data-mode="zh2en">中 → 英</button>
+      <button data-mode="wrong" id="btnWrongMode">只练错词</button>
+      <select id="scope" style="margin-left:auto"></select>
+    </div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<script src="words.js"></script>
+<script>
+(function(){
+  "use strict";
+  var POOL = (window.WORDS || []).filter(function(w){ return w.zh && w.en; });
+  var ROUND = 10;
+  var KEY = "vocab-drill-v1";
+
+  var store = { wrong: {}, stats: {} };
+  try { store = JSON.parse(localStorage.getItem(KEY) || "") || store; } catch(e){}
+  if (!store.wrong) store.wrong = {};
+  if (!store.stats) store.stats = {};
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(store)); } catch(e){} }
+
+  var app = document.getElementById("app");
+  var meta = document.getElementById("meta");
+  var scopeSel = document.getElementById("scope");
+
+  var state = { mode: "en2zh", scope: "all", queue: [], idx: 0, right: 0, wrong: [], answered: false };
+
+  // 范围下拉
+  var groups = {};
+  POOL.forEach(function(w){ groups[w.group] = (groups[w.group]||0)+1; });
+  var optAll = document.createElement("option");
+  optAll.value = "all"; optAll.textContent = "全部（" + POOL.length + "）";
+  scopeSel.appendChild(optAll);
+  Object.keys(groups).sort().forEach(function(g){
+    var o = document.createElement("option");
+    o.value = g; o.textContent = g + "（" + groups[g] + "）";
+    scopeSel.appendChild(o);
+  });
+
+  function poolFor(){
+    var base = POOL;
+    if (state.mode === "wrong"){
+      base = POOL.filter(function(w){ return store.wrong[w.en]; });
+    }
+    if (state.scope !== "all"){
+      base = base.filter(function(w){ return w.group === state.scope; });
+    }
+    return base;
+  }
+
+  function shuffle(a){
+    for (var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+
+  function newRound(){
+    var pool = poolFor();
+    if (pool.length < 4){
+      app.innerHTML = '<div class="card"><div class="empty">这个范围里题不够（至少 4 个词）。换个范围试试。</div></div>';
+      meta.textContent = pool.length + " 词";
+      return;
+    }
+    var picks = shuffle(pool.slice()).slice(0, Math.min(ROUND, pool.length));
+    state.queue = picks.map(function(w){
+      // 干扰项：优先同组，再全库
+      var same = POOL.filter(function(x){ return x.en !== w.en && x.group === w.group; });
+      var others = POOL.filter(function(x){ return x.en !== w.en && x.group !== w.group; });
+      var distract = shuffle(same.slice()).slice(0,3);
+      if (distract.length < 3) distract = distract.concat(shuffle(others.slice()).slice(0, 3-distract.length));
+      var opts = shuffle([w].concat(distract));
+      return { w: w, opts: opts };
+    });
+    state.idx = 0; state.right = 0; state.wrong = []; state.answered = false;
+    renderQuestion();
+  }
+
+  function renderQuestion(){
+    var item = state.queue[state.idx];
+    if (!item){ renderResult(); return; }
+    state.answered = false;
+
+    var isEn2Zh = state.mode !== "zh2en";
+    var qtext = isEn2Zh ? item.w.en : item.w.zh;
+    var subtext = isEn2Zh ? "选出正确的中文" : "选出正确的英文";
+
+    var html = '<div class="card">';
+    html += '<div class="sub">第 ' + (state.idx+1) + ' / ' + state.queue.length + ' 题</div>';
+    html += '<div class="q' + (isEn2Zh ? '' : ' zh') + '">' + esc(qtext) + '</div>';
+    html += '<div class="sub">' + subtext + '</div>';
+    html += '<div class="opts" id="opts">';
+    item.opts.forEach(function(o, i){
+      var label = isEn2Zh ? o.zh : o.en;
+      html += '<button class="opt" data-i="' + i + '"><span class="num">' + (i+1) + '</span>' + esc(label) + '</button>';
+    });
+    html += '</div><div class="fb" id="fb"></div>';
+    html += '<div class="progress" id="prog"></div>';
+    html += '</div>';
+    html += '<div class="hintbar">按 1–4 快速选择</div>';
+    app.innerHTML = html;
+
+    var prog = document.getElementById("prog");
+    for (var i=0;i<state.queue.length;i++){
+      var d = document.createElement("div");
+      d.className = "dot";
+      if (i < state.idx) d.className += " done";
+      prog.appendChild(d);
+    }
+
+    document.getElementById("opts").addEventListener("click", function(e){
+      var b = e.target.closest(".opt");
+      if (!b || state.answered) return;
+      choose(parseInt(b.dataset.i, 10));
+    });
+
+    meta.textContent = (state.idx+1) + " / " + state.queue.length;
+  }
+
+  function choose(i){
+    if (state.answered) return;
+    state.answered = true;
+    var item = state.queue[state.idx];
+    var picked = item.opts[i];
+    var ok = picked.en === item.w.en && picked.zh === item.w.zh;
+    var nodes = document.querySelectorAll(".opt");
+    nodes.forEach(function(n, k){
+      if (item.opts[k].en === item.w.en && item.opts[k].zh === item.w.zh) n.classList.add("correct");
+      else if (k === i) n.classList.add("wrong");
+    });
+
+    var fb = document.getElementById("fb");
+    if (ok){
+      state.right++;
+      fb.innerHTML = "✓ 对　<b>" + esc(item.w.en) + "</b>： " + esc(item.w.zh);
+      delete store.wrong[item.w.en];
+    } else {
+      state.wrong.push(item.w);
+      store.wrong[item.w.en] = true;
+      fb.innerHTML = "✗ 答案是 <b>" + esc(item.w.en) + "</b>： " + esc(item.w.zh);
+    }
+    store.stats[item.w.en] = store.stats[item.w.en] || { r:0, w:0 };
+    if (ok) store.stats[item.w.en].r++; else store.stats[item.w.en].w++;
+    save();
+
+    var prog = document.getElementById("prog");
+    var dots = prog.querySelectorAll(".dot");
+    if (dots[state.idx]) dots[state.idx].className = "dot " + (ok ? "ok" : "bad");
+
+    setTimeout(function(){
+      state.idx++;
+      renderQuestion();
+    }, ok ? 620 : 1500);
+  }
+
+  function renderResult(){
+    var total = state.queue.length;
+    var pct = total ? Math.round(state.right/total*100) : 0;
+    var html = '<div class="card center">';
+    html += '<div class="stat">这轮做完</div>';
+    html += '<div class="big">' + state.right + ' / ' + total + '</div>';
+    html += '<div class="stat">正确率 ' + pct + '%</div>';
+    if (state.wrong.length){
+      html += '<div class="wrongs">';
+      state.wrong.forEach(function(w){
+        html += '<div>' + esc(w.en) + '<i>' + esc(w.zh) + '</i></div>';
+      });
+      html += '</div>';
+    } else {
+      html += '<div class="stat" style="margin-top:14px">全对，这轮没有错词 🎉</div>';
+    }
+    html += '<div class="actions">';
+    html += '<button class="primary" id="again">再来一轮</button>';
+    if (state.wrong.length) html += '<button id="redoWrong">只练这轮的错词</button>';
+    html += '</div></div>';
+    app.innerHTML = html;
+    meta.textContent = "完成";
+
+    document.getElementById("again").addEventListener("click", newRound);
+    var rw = document.getElementById("redoWrong");
+    if (rw) rw.addEventListener("click", function(){
+      var list = state.wrong.slice();
+      state.queue = list.map(function(w){
+        var same = POOL.filter(function(x){ return x.en !== w.en && x.group === w.group; });
+        var others = POOL.filter(function(x){ return x.en !== w.en && x.group !== w.group; });
+        var distract = shuffle(same.slice()).slice(0,3);
+        if (distract.length < 3) distract = distract.concat(shuffle(others.slice()).slice(0, 3-distract.length));
+        return { w: w, opts: shuffle([w].concat(distract)) };
+      });
+      state.idx = 0; state.right = 0; state.wrong = []; state.answered = false;
+      renderQuestion();
+    });
+  }
+
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
+    });
+  }
+
+  // 模式切换
+  document.getElementById("modes").addEventListener("click", function(e){
+    var b = e.target.closest("button[data-mode]");
+    if (!b) return;
+    state.mode = b.dataset.mode;
+    [].forEach.call(document.querySelectorAll("#modes button[data-mode]"), function(x){
+      x.classList.toggle("on", x === b);
+    });
+    newRound();
+  });
+
+  document.getElementById("btnWrongMode").addEventListener("click", function(){
+    if (!Object.keys(store.wrong).length){
+      app.innerHTML = '<div class="card"><div class="empty">还没有错词。先做几轮，错的会自动收进来。</div></div>';
+      return;
+    }
+  });
+
+  scopeSel.addEventListener("change", function(){
+    state.scope = scopeSel.value;
+    newRound();
+  });
+
+  document.addEventListener("keydown", function(e){
+    var n = parseInt(e.key, 10);
+    if (n >= 1 && n <= 4){
+      var btns = document.querySelectorAll(".opt");
+      if (btns[n-1]) btns[n-1].click();
+    }
+  });
+
+  // 初始化
+  if (!POOL.length){
+    app.innerHTML = '<div class="card"><div class="empty">没读到 words.js，检查文件和它在同一个文件夹。</div></div>';
+    return;
+  }
+  newRound();
+})();
+</script>
+</body>
+</html>
