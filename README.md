@@ -18,7 +18,7 @@
 | `words.md` | 人读版，按课程分组的表格 |
 | `practice.html` | **生词练习器**：英→中 / 中→英 四选一，自动记错词，可只练错词、按课程筛范围 |
 | `practice-standalone.html` | 同一个练习器，**数据已内嵌**（32 KB 单文件，发给别人也不会缺 words.js） |
-| `word-family-practice.html` | 词族三课练习册（Gum on the Rug / Look at My Pen / Look at It Go，28 题） |
+| `practice/` | **每篇课文的练习册**，一篇一个 HTML，互不覆盖（见 `practice/README.md` 清单） |
 
 ## 怎么用
 
