@@ -14,13 +14,15 @@
 | `words.js` | 给本地 HTML 读的版本（`window.WORDS`），避开 `file://` 的 fetch 限制 |
 | `words.md` | 人读版，按课程分组的表格 |
 | `practice.html` | **生词练习器**：英→中 / 中→英 四选一，自动记错词，可只练错词、按课程筛范围 |
+| `practice-standalone.html` | 同一个练习器，**数据已内嵌**（32 KB 单文件，发给别人也不会缺 words.js） |
 | `word-family-practice.html` | 词族三课练习册（Gum on the Rug / Look at My Pen / Look at It Go，28 题） |
 
 ## 怎么用
 
 双击 `practice.html`，浏览器打开即可，不需要联网、不需要起服务。
 
-- 每轮 10 题，答错的词会进「错词本」，右上角可切换范围
+- 每轮 10 题，答错的词会进「错词本」，顶部可切换范围
+- `practice-standalone.html` 是自包含版本，单个文件拷走就能用；`practice.html` 需要和 `words.js` 放一起
 - 键盘 `1`–`4` 直接选
 - 进度和错词存在浏览器 localStorage 里，关掉再开还在
 
