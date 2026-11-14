@@ -6,7 +6,10 @@
 打开方式：双击，浏览器直接跑，不用联网、不用起服务。
 答题状态存在浏览器 localStorage 里，文件名不同就各存各的，不会互相干扰。
 
-`../practice.html` 是**另一件事**：它不针对某一篇，是拿整个 `words.json`（240 词）
+**导出错题**：每个页面顶部有「导出错题」按钮。点一下会把做错的题（题干、你的答案、正确答案、解析）
+导出成 txt 到下载目录，同时复制到剪贴板。把文件拖进对话、或直接粘贴内容，就能针对错题出专项练习。
+
+`../practice.html` 是**另一件事**：它不针对某一篇，是拿整个 `words.json`（248 词）
 抽题背单词的通用练习器。新增课文时不需要动它。
 
 ## 清单
@@ -16,5 +19,6 @@
 | 2026-11-12 | 词族三课：Gum on the Rug / Look at My Pen / Look at It Go | `2026-11-12-词族三课.html` | 28 |
 | 2026-11-14 | Tree Frogs（Animal Safari）：树蛙科普，含从句/长句/改错 | `2026-11-14-Tree-Frogs.html` | 52 |
 | 2026-11-14 | The Truck Can Go（Read and Play，字母 T）：Put...in... 句型 + truck/tractor 对比 | `2026-11-14-The-Truck-Can-Go.html` | 52 |
+| 2026-11-14 | Hello! I'm a Spider（Read and Play，字母 S）：crawl 生词 + on/in 对比 | `2026-11-14-Hello-Im-a-Spider.html` | 52 |
 
 以后每加一课，就在这里追加一行。

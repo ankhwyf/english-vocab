@@ -118,6 +118,7 @@
       <button id="btnCheckAll" class="primary">检查全部</button>
       <button id="btnRedo">重做错题</button>
       <button id="btnReset" class="ghost">清空重做</button>
+      <button id="btnExport" class="ghost">导出错题</button>
     </div>
   </div>
 </header>
@@ -437,6 +438,40 @@
   document.getElementById("btnReset").addEventListener("click", function(){
     if (!confirm("清空全部作答，重新开始？")) return;
     state = {}; save(); build();
+  });
+
+  var btnE = document.getElementById("btnExport");
+  if (btnE) btnE.addEventListener("click", function(){
+    var lines = [], n = 0, done = 0, right = 0;
+    lines.push("错题导出 · " + document.title);
+    lines.push("时间：" + new Date().toLocaleString());
+    lines.push("");
+    ALL.forEach(function(q){
+      var st = state[q.id];
+      if (st && typeof st.ok === "boolean"){
+        done += 1;
+        if (st.ok) right += 1;
+        else {
+          n += 1;
+          lines.push(n + ". 【第 " + (order[q.id] || "?") + " 题】" + q.stem);
+          if (q.sub) lines.push("   提示：" + q.sub);
+          lines.push("   你的答案：" + (st.value || "（空）"));
+          lines.push("   正确答案：" + (q.answers || []).join(" / "));
+          if (q.explain) lines.push("   解析：" + q.explain);
+          lines.push("");
+        }
+      }
+    });
+    lines.push("-------");
+    lines.push("已完成 " + done + " / " + ALL.length + "，答对 " + right + "，错题 " + n + " 道。");
+    var txt = lines.join("\n");
+    var blob = new Blob([txt], {type: "text/plain;charset=utf-8"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题-" + document.title.replace(/[\\/:*?"<>|]/g, "-") + ".txt";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(function(){});
+    alert(n ? ("已导出 " + n + " 道错题，文件在下载目录，内容也复制到剪贴板了。") : "暂时没有做错的题。");
   });
 
   build();

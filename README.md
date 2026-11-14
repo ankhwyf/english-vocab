@@ -1,11 +1,11 @@
 # 英语生词库
 
-从 Flowus 绘本笔记里自动提取的「生疏词」清单 —— 也就是你在 `单词` 列里用**代码块或加粗**标出来的那些。
+从 Flowus 绘本笔记里整理出的「生疏词」清单（最初那批是从 `单词` 列里代码块/加粗的片段一次性抽出来的）。
 
 **用途定位**：这里是**取词素材库**，不是单词专项练习册。每整理完一篇新课文，出练习题和中译英时
 从这里抓一批旧词混进去，让学过的词在新句子里反复复现。练习永远跟着课文走，不单独按词出题。
 
-- **240 条**，覆盖 60 个课程/主题（字母书、SUPER CUTE!、Animal Safari、Read and Play 等）
+- **248 条**，覆盖 60+ 课程/主题（字母书、SUPER CUTE!、Animal Safari、Read and Play 等）
 - 每条带中文释义，按来源课程分组
 
 ## 文件
@@ -31,18 +31,19 @@
 
 ## 怎么更新
 
-数据来自 Flowus 数据库 `6da864d4-5037-41b0-997f-1db473f90f71` 的「单词」列：
-凡是设成**代码块**或**加粗**的片段，按 `英文(中文释义)` 的格式解析。
-
-在 Flowus 里加了新词之后，重新跑一次 `scripts/build_vocab.py`（需要 `flowus` CLI 和 token）：
+**现行方式：一篇课文追加一次，不再重扫整个数据库。**
 
 ```sh
-export FLOWUS_TOKEN=...
-python3 scripts/build_vocab.py
+python3 scripts/add_words.py --group "Hello! I'm a Spider" \
+    "crawl:爬（贴地、慢慢地爬，虫子和婴儿都用它）"
 ```
 
-脚本会重新生成 `words.json / words.csv / words.js / words.md` 四个文件。
-新词如果在脚本的 `ZH` 字典里没有释义，会被剔除并打印出来，补一行就行。
+- 参数是 `英文:中文`，可一次给多个；已有的词只补释义和来源，不会重复添加
+- 脚本自动重新生成 `words.json / words.csv / words.js / words.md`
+- 想从 JSON 传入就加 `--json new.json`（`[{"en":..,"zh":..}]`）
+
+`scripts/build_vocab.py` 是**最初那次全库回填**用的（从 Flowus 数据库 `6da864d4…` 的「单词」列
+抽取代码块/加粗片段）。历史保留，平时不用再跑——重跑会按数据库重算，可能覆盖后来的手动补充。
 
 ## 同步到 GitHub
 
