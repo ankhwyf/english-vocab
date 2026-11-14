@@ -14,5 +14,6 @@
 | 日期 | 内容 | 文件 | 题量 |
 | --- | --- | --- | --- |
 | 2026-11-12 | 词族三课：Gum on the Rug / Look at My Pen / Look at It Go | `2026-11-12-词族三课.html` | 28 |
+| 2026-11-14 | Tree Frogs（Animal Safari）：树蛙科普，含从句/长句/改错 | `2026-11-14-Tree-Frogs.html` | 52 |
 
 以后每加一课，就在这里追加一行。

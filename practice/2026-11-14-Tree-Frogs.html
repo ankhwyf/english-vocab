@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>英语练习 · Tree Frogs</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --ink:#1b1f24; --sub:#5b6470;
+    --line:#e3e6ea; --blue:#3563e9; --blue-soft:#eef2fe;
+    --ok:#0f7a3d; --ok-soft:#e9f7ef; --ok-line:#12a150;
+    --bad:#b42318; --bad-soft:#fdecea; --bad-line:#e5484d;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:16px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .bar{
+    position:sticky; top:0; z-index:10; background:rgba(255,255,255,.92);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
+  }
+  .bar-in{max-width:760px; margin:0 auto; padding:12px 20px 10px}
+  .row{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .title{font-weight:650; font-size:15px; letter-spacing:.2px}
+  .meta{margin-left:auto; display:flex; gap:10px; align-items:baseline; font-size:13px; color:var(--sub)}
+  .meta b{font-size:15px; color:var(--ink); font-variant-numeric:tabular-nums}
+  .meta #pct{color:#8b94a1; padding-left:8px; border-left:1px solid var(--line)}
+  .progress{height:6px; background:#eceff3; border-radius:99px; margin:10px 0 8px; overflow:hidden}
+  .progress i{display:block; height:100%; width:0; background:linear-gradient(90deg,#4f7cf0,#12a150); border-radius:99px; transition:width .25s ease}
+  .acts{display:flex; gap:8px; flex-wrap:wrap}
+  button{
+    font:inherit; font-size:13.5px; padding:7px 14px; border-radius:9px; cursor:pointer;
+    border:1px solid var(--line); background:#fff; color:var(--ink);
+  }
+  button:hover{border-color:#c9cfd8; background:#fafbfc}
+  button.primary{background:var(--blue); border-color:var(--blue); color:#fff}
+  button.primary:hover{background:#2b55d4}
+  button.ghost{color:var(--sub)}
+  main{max-width:760px; margin:0 auto; padding:26px 20px 60px}
+  .part{margin-bottom:34px; scroll-margin-top:104px}
+  .part h2{font-size:17px; margin:0 0 4px; letter-spacing:.3px}
+  .part .pdesc{margin:0 0 14px; color:var(--sub); font-size:13.5px}
+  .card{
+    background:var(--card); border-radius:var(--radius); padding:15px 18px 13px;
+    margin-bottom:12px; border-left:4px solid transparent;
+    box-shadow:0 1px 2px rgba(16,24,40,.05), 0 2px 6px rgba(16,24,40,.05);
+  }
+  .card.ok{border-left-color:var(--ok-line)}
+  .card.bad{border-left-color:var(--bad-line)}
+  .qhead{display:flex; gap:10px; align-items:flex-start}
+  .no{
+    flex:0 0 26px; height:26px; border-radius:50%; background:#eef1f5; color:var(--sub);
+    font-size:12.5px; font-weight:600; display:grid; place-items:center; margin-top:2px;
+    font-variant-numeric:tabular-nums;
+  }
+  .card.ok .no{background:var(--ok-soft); color:var(--ok)}
+  .card.bad .no{background:var(--bad-soft); color:var(--bad)}
+  .stem{flex:1; min-width:0}
+  .stem .zh{color:var(--sub); font-size:13.5px; display:block; margin-top:2px}
+  .hint{display:inline-block; margin-left:6px; padding:1px 7px; border-radius:6px;
+        background:#f1f3f6; color:#556; font-size:12.5px; white-space:nowrap}
+  .opts{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 0 36px}
+  .opt{
+    font:inherit; font-size:15.5px; padding:7px 18px; border-radius:10px;
+    border:1.5px solid var(--line); background:#fff; cursor:pointer;
+  }
+  .opt:hover{border-color:#b9c6e6; background:#fbfcff}
+  .opt.sel{border-color:var(--blue); background:var(--blue-soft)}
+  .opt.correct{border-color:var(--ok-line); background:var(--ok-soft); color:var(--ok); font-weight:600}
+  .opt.wrong{border-color:var(--bad-line); background:var(--bad-soft); color:var(--bad)}
+  .fillwrap{margin:12px 0 0 36px; display:flex; gap:8px; flex-wrap:wrap}
+  input.fill{
+    flex:1 1 320px; max-width:520px; min-width:200px; font:inherit; font-size:15.5px; padding:9px 12px;
+    border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--ink);
+  }
+  input.fill:focus{outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(53,99,233,.12)}
+  input.fill.ok{border-color:var(--ok-line); background:var(--ok-soft)}
+  input.fill.bad{border-color:var(--bad-line); background:var(--bad-soft)}
+  .fb{margin:10px 0 0 36px; font-size:13.8px; line-height:1.7}
+  .fb.ok{color:var(--ok)}
+  .fb.bad{color:var(--bad)}
+  .fb .ans{font-weight:600}
+  .fb .ex{display:block; color:var(--sub); margin-top:3px}
+  footer{max-width:760px; margin:0 auto; padding:0 20px 50px; color:var(--sub); font-size:12.5px}
+  .empty{color:var(--sub)}
+  @media (max-width:560px){
+    .bar-in{padding:10px 14px 8px}
+    main{padding:18px 12px 40px}
+    .card{padding:14px 14px 12px}
+    .opts,.fillwrap,.fb{margin-left:0}
+    .opt{flex:1 1 auto; text-align:center}
+    .meta{font-size:12px}
+  }
+  @media print{
+    .bar,.acts,footer{display:none}
+    body{background:#fff}
+    .card{break-inside:avoid; box-shadow:none; border:1px solid #ddd}
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="row">
+      <div class="title">英语练习 · 词族三课</div>
+      <div class="meta">
+        <span>得分 <b id="score">0</b> / <span id="total">28</span></span>
+        <span id="pct">0%</span>
+      </div>
+    </div>
+    <div class="progress"><i id="barfill"></i></div>
+    <div class="row acts">
+      <button id="btnCheckAll" class="primary">检查全部</button>
+      <button id="btnRedo">重做错题</button>
+      <button id="btnReset" class="ghost">清空重做</button>
+    </div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  本课来自 Animal Safari: Tree Frogs。答案不区分大小写和标点，拼写必须正确；中译英只要句子对，换一种说法也算对。
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var PARTS = [
+ {
+  "name": "一、选词填空（每词只用一次）",
+  "desc": "词库：amphibians / pads / grip / inflate / gills / camouflage / hatch / an insect。其中 camouflage、hatch、an insect 是以前学过、这次又碰到的词。",
+  "items": [
+   {
+    "id": "p1q1",
+    "type": "fill",
+    "stem": "Tree frogs are small ______. They can live in water and on land.",
+    "answers": [
+     "amphibians"
+    ],
+    "explain": "两栖动物。amphi- 两边，指水陆两种生活。"
+   },
+   {
+    "id": "p1q2",
+    "type": "fill",
+    "stem": "Their toes have sticky ______ that help them climb.",
+    "answers": [
+     "pads"
+    ],
+    "explain": "脚趾上的肉垫、吸盘。toes 是复数，pads 也要复数。"
+   },
+   {
+    "id": "p1q3",
+    "type": "fill",
+    "stem": "The pads help the frogs ______ the branches.",
+    "answers": [
+     "grip"
+    ],
+    "explain": "help sb. do sth.，后面直接跟动词原形，不加 to、不加 -ing。"
+   },
+   {
+    "id": "p1q4",
+    "type": "fill",
+    "stem": "Male frogs ______ their throats when they call.",
+    "answers": [
+     "inflate"
+    ],
+    "explain": "主语 Male frogs 是复数，用原形 inflate。"
+   },
+   {
+    "id": "p1q5",
+    "type": "fill",
+    "stem": "Tadpoles breathe with ______ before they grow legs.",
+    "answers": [
+     "gills"
+    ],
+    "explain": "蝌蚪用鳃呼吸，长大后才改用肺。"
+   },
+   {
+    "id": "p1q6",
+    "type": "fill",
+    "stem": "A frog's green skin is a kind of ______.",
+    "answers": [
+     "camouflage"
+    ],
+    "explain": "旧词复现： camouflage 伪装。这里指保护色。"
+   },
+   {
+    "id": "p1q7",
+    "type": "fill",
+    "stem": "Baby frogs ______ from eggs.",
+    "answers": [
+     "hatch"
+    ],
+    "explain": "旧词复现：hatch 孵化、破壳。同义表达是 break out of the eggs。"
+   },
+   {
+    "id": "p1q8",
+    "type": "fill",
+    "stem": "Tree frogs eat ______, not leaves.",
+    "answers": [
+     "an insect"
+    ],
+    "explain": "旧词复现：an insect 一只昆虫。注意冠词 an 不能丢。"
+   }
+  ]
+ },
+ {
+  "name": "二、词形变化（用括号里词的正确形式填空）",
+  "desc": "只填括号里那个词变好之后的样子，别把整句抄进来。",
+  "items": [
+   {
+    "id": "p2q1",
+    "type": "fill",
+    "stem": "Tree frogs ______ (be) small amphibians.",
+    "answers": [
+     "are"
+    ],
+    "explain": "主语复数，用 are。"
+   },
+   {
+    "id": "p2q2",
+    "type": "fill",
+    "stem": "A tree frog ______ (have) sticky pads on its toes.",
+    "answers": [
+     "has"
+    ],
+    "explain": "第三人称单数，have → has。"
+   },
+   {
+    "id": "p2q3",
+    "type": "fill",
+    "stem": "The female ______ (lay) eggs in the water.",
+    "answers": [
+     "lays"
+    ],
+    "explain": "主语单数，lay → lays。别写成 lies（躺）。"
+   },
+   {
+    "id": "p2q4",
+    "type": "fill",
+    "stem": "Tadpoles ______ (break) out of the eggs.",
+    "answers": [
+     "break"
+    ],
+    "explain": "主语复数，用原形。"
+   },
+   {
+    "id": "p2q5",
+    "type": "fill",
+    "stem": "Soon they ______ (grow) legs and climb up.",
+    "answers": [
+     "grow"
+    ],
+    "explain": "原文用一般现在时讲习性，不用 grew。"
+   },
+   {
+    "id": "p2q6",
+    "type": "fill",
+    "stem": "The pads help the frogs ______ (grip) the branches.",
+    "answers": [
+     "grip",
+     "to grip"
+    ],
+    "explain": "help sb. do / to do，两种都对，但不能是 gripping。"
+   }
+  ]
+ },
+ {
+  "name": "三、填介词或连词",
+  "desc": "每题填一个词（in or by water 那题填两个空，用 / 隔开）。",
+  "items": [
+   {
+    "id": "p3q1",
+    "type": "fill",
+    "stem": "Tree frogs are found all ______ the world.",
+    "answers": [
+     "around",
+     "over"
+    ],
+    "explain": "all around / all over the world 都可以。"
+   },
+   {
+    "id": "p3q2",
+    "type": "fill",
+    "stem": "Their colors help them hide ______ predators.",
+    "answers": [
+     "from"
+    ],
+    "explain": "hide from 是固定搭配，介词只能是 from。"
+   },
+   {
+    "id": "p3q3",
+    "type": "fill",
+    "stem": "Tadpoles break ______ the eggs.",
+    "answers": [
+     "out of"
+    ],
+    "explain": "break out of 破……而出。漏掉 of 就变成「爆发」了。"
+   },
+   {
+    "id": "p3q4",
+    "type": "fill",
+    "stem": "Females lay eggs ______ or ______ water.",
+    "answers": [
+     "in",
+     "by"
+    ],
+    "explain": "in 在水里，by 在水边，一个换一个位置。"
+   },
+   {
+    "id": "p3q5",
+    "type": "fill",
+    "stem": "Their throats inflate ______ balloons.",
+    "answers": [
+     "like"
+    ],
+    "explain": "明喻用 like + 名词复数。"
+   },
+   {
+    "id": "p3q6",
+    "type": "fill",
+    "stem": "They use their colors ______ hide.",
+    "answers": [
+     "to"
+    ],
+    "explain": "use sth. to do sth.，表目的。"
+   }
+  ]
+ },
+ {
+  "name": "四、句型转换",
+  "desc": "写改写后的整句，句末不用打问号。",
+  "items": [
+   {
+    "id": "p4q1",
+    "type": "fill",
+    "stem": "Tree frogs are found all around the world.",
+    "answers": [
+     "are tree frogs found all around the world",
+     "are tree frogs found all around the world?"
+    ],
+    "explain": "把 be 动词 are 提到主语前，其余不动。",
+    "sub": "改一般疑问句"
+   },
+   {
+    "id": "p4q2",
+    "type": "fill",
+    "stem": "Tadpoles have gills and tails.",
+    "answers": [
+     "tadpoles do not have gills and tails",
+     "tadpoles don't have gills and tails"
+    ],
+    "explain": "实义动词 have 的否定要借助 do not，不能直接说 have not。",
+    "sub": "改否定句"
+   },
+   {
+    "id": "p4q3",
+    "type": "fill",
+    "stem": "Male tree frogs call to females.",
+    "answers": [
+     "which frogs call to females",
+     "who calls to females"
+    ],
+    "explain": "对主语提问，后面用陈述语序，不再倒装。",
+    "sub": "对 Male tree frogs 提问"
+   },
+   {
+    "id": "p4q4",
+    "type": "fill",
+    "stem": "Their toes have sticky pads.",
+    "answers": [
+     "there are sticky pads on their toes"
+    ],
+    "explain": "「某处有某物」用 There be；pads 是复数，用 There are。",
+    "sub": "用 There be 改写，意思不变"
+   }
+  ]
+ },
+ {
+  "name": "五、连词成句",
+  "desc": "把词重新排好，写成完整句子。",
+  "items": [
+   {
+    "id": "p5q1",
+    "type": "fill",
+    "stem": "frogs / tree / climb / can / all / .",
+    "answers": [
+     "all tree frogs can climb",
+     "all tree frogs can climb."
+    ],
+    "explain": "All 放在主语前，情态动词 can 后面跟原形。"
+   },
+   {
+    "id": "p5q2",
+    "type": "fill",
+    "stem": "eggs / females / water / in / lay / .",
+    "answers": [
+     "females lay eggs in water",
+     "females lay eggs in water."
+    ],
+    "explain": "主语 + 动词 + 宾语 + 地点，地点短语放句尾。"
+   },
+   {
+    "id": "p5q3",
+    "type": "fill",
+    "stem": "legs / soon / they / grow / .",
+    "answers": [
+     "soon they grow legs",
+     "they soon grow legs",
+     "soon they grow legs.",
+     "they soon grow legs."
+    ],
+    "explain": "soon 放句首或主语后都可以。"
+   }
+  ]
+ },
+ {
+  "name": "六、合并句子（用括号里的词，写成一句）",
+  "desc": "用括号给的词把两句并成一句，注意从句里的语序是陈述语序。",
+  "items": [
+   {
+    "id": "p6q1",
+    "type": "fill",
+    "stem": "Tree frogs are small animals. They live in trees.",
+    "answers": [
+     "tree frogs are small animals that live in trees"
+    ],
+    "explain": "that 引导定语从句，修饰 animals；从句里 live 用复数，跟先行词一致。",
+    "sub": "that"
+   },
+   {
+    "id": "p6q2",
+    "type": "fill",
+    "stem": "Tadpoles have gills. They can breathe in water.",
+    "answers": [
+     "tadpoles can breathe in water because they have gills"
+    ],
+    "explain": "because 引导原因状语从句，中文习惯「因为……所以」，英语里 because 和 so 不能同时出现。",
+    "sub": "because"
+   },
+   {
+    "id": "p6q3",
+    "type": "fill",
+    "stem": "The frog sees a bird. It jumps away.",
+    "answers": [
+     "when the frog sees a bird it jumps away",
+     "when the frog sees a bird, it jumps away"
+    ],
+    "explain": "when 从句在前时，后面加逗号；主句用 it 指代 the frog。",
+    "sub": "when"
+   },
+   {
+    "id": "p6q4",
+    "type": "fill",
+    "stem": "The pads are sticky. The frog can grip the branch.",
+    "answers": [
+     "the pads are so sticky that the frog can grip the branch"
+    ],
+    "explain": "so + 形容词 + that 从句，表「如此……以至于」。注意 so 后面跟形容词，such 后面才跟名词。",
+    "sub": "so ... that"
+   }
+  ]
+ },
+ {
+  "name": "七、改错（每句一处错误）",
+  "desc": "每题只有一处错。写出改好后的整句，不必解释。",
+  "items": [
+   {
+    "id": "p7q1",
+    "type": "fill",
+    "stem": "Tree frogs is small amphibians.",
+    "answers": [
+     "tree frogs are small amphibians"
+    ],
+    "explain": "主语复数用 are。"
+   },
+   {
+    "id": "p7q2",
+    "type": "fill",
+    "stem": "Their toes has sticky pads.",
+    "answers": [
+     "their toes have sticky pads"
+    ],
+    "explain": "toes 是复数，用 have。"
+   },
+   {
+    "id": "p7q3",
+    "type": "fill",
+    "stem": "The pads help the frogs to gripping branches.",
+    "answers": [
+     "the pads help the frogs grip branches",
+     "the pads help the frogs to grip branches"
+    ],
+    "explain": "help 后面不能跟 -ing，只能是 do 或 to do。"
+   },
+   {
+    "id": "p7q4",
+    "type": "fill",
+    "stem": "Tadpoles breaks out of the eggs.",
+    "answers": [
+     "tadpoles break out of the eggs"
+    ],
+    "explain": "主语复数，动词用原形。"
+   },
+   {
+    "id": "p7q5",
+    "type": "fill",
+    "stem": "Males frog call to females.",
+    "answers": [
+     "male frogs call to females"
+    ],
+    "explain": "修饰名词的形容词不加 -s：male frogs。"
+   },
+   {
+    "id": "p7q6",
+    "type": "fill",
+    "stem": "Their throats inflate like balloon.",
+    "answers": [
+     "their throats inflate like balloons"
+    ],
+    "explain": "like 后面可数名词要复数。"
+   }
+  ]
+ },
+ {
+  "name": "八、判断对错（T / F）",
+  "desc": "看课文判断。T 是对的，F 是错的。",
+  "items": [
+   {
+    "id": "p8q1",
+    "type": "choice",
+    "stem": "All tree frogs can climb.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "t",
+     "true"
+    ],
+    "explain": "原文第一句就是 All tree frogs can climb。"
+   },
+   {
+    "id": "p8q2",
+    "type": "choice",
+    "stem": "Tree frogs live in only one part of the world.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "f",
+     "false"
+    ],
+    "explain": "原文是 all around the world，全世界都有。"
+   },
+   {
+    "id": "p8q3",
+    "type": "choice",
+    "stem": "Tadpoles have legs first, then gills.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "f",
+     "false"
+    ],
+    "explain": "顺序反了：先有鳃和尾巴，soon 才长腿。"
+   },
+   {
+    "id": "p8q4",
+    "type": "choice",
+    "stem": "Some tree frogs have red eyes.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "t",
+     "true"
+    ],
+    "explain": "Some have red eyes to surprise birds and snakes。"
+   },
+   {
+    "id": "p8q5",
+    "type": "choice",
+    "stem": "Only female frogs call.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "f",
+     "false"
+    ],
+    "explain": "叫的是 Male tree frogs，雄性。"
+   }
+  ]
+ },
+ {
+  "name": "九、英译中（选最准确的一句）",
+  "desc": "先自己想一遍，再选。错误选项都只错一个地方，找出那处。",
+  "items": [
+   {
+    "id": "p9q1",
+    "type": "choice",
+    "stem": "They use their colors to hide from predators.",
+    "options": [
+     "它们用体色躲开捕食者。",
+     "它们用颜色把捕食者藏起来。",
+     "它们用体色吸引捕食者。"
+    ],
+    "answers": [
+     "它们用体色躲开捕食者。"
+    ],
+    "explain": "hide from 是「躲开某人」，不是「把某人藏起来」；predator 是捕食者。"
+   },
+   {
+    "id": "p9q2",
+    "type": "choice",
+    "stem": "Their toes have sticky pads. They help the frogs grip branches.",
+    "options": [
+     "它们的脚趾长着黏黏的肉垫，帮它们抓住树枝。",
+     "它们的脚趾长着黏黏的肉垫，帮它们从树枝上滑下来。",
+     "它们的脚趾长着硬硬的爪子，帮它们抓住树枝。"
+    ],
+    "answers": [
+     "它们的脚趾长着黏黏的肉垫，帮它们抓住树枝。"
+    ],
+    "explain": "pads 是肉垫、吸盘，不是爪子（claw）；grip 是抓牢，方向相反的说法要先排除。"
+   },
+   {
+    "id": "p9q3",
+    "type": "choice",
+    "stem": "First they have gills and tails. Soon they grow legs. Time to climb!",
+    "options": [
+     "起初它们有鳃和尾巴。很快长出腿。该往上爬了！",
+     "起初它们有腿和尾巴。很快长出鳃。该往下爬了！",
+     "起初它们有鳃和翅膀。很快长出腿。该飞了！"
+    ],
+    "answers": [
+     "起初它们有鳃和尾巴。很快长出腿。该往上爬了！"
+    ],
+    "explain": "顺序是 gills and tails → grow legs，不能颠倒；climb 是往上爬。"
+   }
+  ]
+ },
+ {
+  "name": "十、中译英（仿写）",
+  "desc": "用这一课的结构和学过的词造句子，不必和课文一字不差。括号里是提示词。",
+  "items": [
+   {
+    "id": "p10q1",
+    "type": "fill",
+    "stem": "树蛙是小型两栖动物，世界各地都能找到它们。",
+    "sub": "be found",
+    "answers": [
+     "Tree frogs are small amphibians. They are found all around the world."
+    ],
+    "explain": ""
+   },
+   {
+    "id": "p10q2",
+    "type": "fill",
+    "stem": "青蛙的脚趾上有黏黏的肉垫，帮它抓住树枝。",
+    "sub": "help ... grip",
+    "answers": [
+     "Their toes have sticky pads. They help the frogs grip branches."
+    ],
+    "explain": ""
+   },
+   {
+    "id": "p10q3",
+    "type": "fill",
+    "stem": "有些动物用颜色躲开捕食者。",
+    "sub": "use ... to ... / hide from",
+    "answers": [
+     "Some animals use their colors to hide from predators."
+    ],
+    "explain": ""
+   },
+   {
+    "id": "p10q4",
+    "type": "fill",
+    "stem": "雄蛙鸣叫时，喉咙像气球一样鼓起来。",
+    "sub": "when / inflate / like",
+    "answers": [
+     "When male frogs call, their throats inflate like balloons."
+    ],
+    "explain": ""
+   },
+   {
+    "id": "p10q5",
+    "type": "fill",
+    "stem": "蝌蚪先有鳃和尾巴，后来才长出腿。",
+    "sub": "first / later",
+    "answers": [
+     "First tadpoles have gills and tails. Later they grow legs."
+    ],
+    "explain": ""
+   },
+   {
+    "id": "p10q6",
+    "type": "fill",
+    "stem": "雌蛙把卵产在水边，蝌蚪破卵而出。",
+    "sub": "lay eggs / break out of",
+    "answers": [
+     "Females lay eggs by the water. Tadpoles break out of the eggs."
+    ],
+    "explain": ""
+   },
+   {
+    "id": "p10q7",
+    "type": "fill",
+    "stem": "会爬树的蛙脚上都有吸盘，所以它们不会掉下来。",
+    "sub": "that / so",
+    "answers": [
+     "Tree frogs are frogs that can climb, so they do not fall down.",
+     "The frogs that climb trees have pads on their toes, so they do not fall down."
+    ],
+    "explain": ""
+   }
+  ]
+ }
+];
+
+  var KEY = "tree-frogs-practice-v1";
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch(e){ state = {}; }
+
+  var ALL = [];
+  PARTS.forEach(function(p){ p.items.forEach(function(q){ ALL.push(q); }); });
+
+  function norm(s){
+    return String(s == null ? "" : s)
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[.,!?;:]/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  }
+  function isCorrect(q, val){
+    var v = norm(val);
+    if (!v) return false;
+    for (var i=0;i<q.answers.length;i++){
+      if (norm(q.answers[i]) === v) return true;
+    }
+    return false;
+  }
+  function save(){
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
+  }
+
+  var app = document.getElementById("app");
+
+  function el(tag, cls){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    return e;
+  }
+
+  function renderCard(q, idx){
+    var st = state[q.id] || null;
+    var judged = st && typeof st.ok === "boolean";
+
+    var card = el("div", "card" + (judged ? (st.ok ? " ok" : " bad") : ""));
+
+    var head = el("div", "qhead");
+    var no = el("div", "no");
+    no.textContent = String(idx);
+    var stem = el("div", "stem");
+    var s = el("div");
+    s.textContent = q.stem;
+    stem.appendChild(s);
+
+    if (q.sub){
+      var sub = el("span", "zh");
+      var t = q.sub.replace(/^提示：/, "");
+      if (/^提示/.test(q.sub)){
+        var hint = el("span", "hint");
+        hint.textContent = t;
+        sub.appendChild(document.createTextNode("用上 "));
+        sub.appendChild(hint);
+      } else {
+        sub.textContent = q.sub;
+      }
+      stem.appendChild(sub);
+    }
+    head.appendChild(no);
+    head.appendChild(stem);
+    card.appendChild(head);
+
+    if (q.type === "choice"){
+      var wrap = el("div", "opts");
+      q.options.forEach(function(opt){
+        var b = el("button", "opt");
+        b.type = "button";
+        b.textContent = opt;
+        if (st && st.value === opt){
+          b.classList.add("sel");
+          if (judged) b.classList.add(st.ok ? "correct" : "wrong");
+        }
+        if (judged && !st.ok && q.answers.indexOf(opt) >= 0) b.classList.add("correct");
+        b.addEventListener("click", function(){
+          var ok = isCorrect(q, opt);
+          state[q.id] = { value: opt, ok: ok };
+          save(); redrawCard(card, q, idx); updateStats();
+        });
+        wrap.appendChild(b);
+      });
+      card.appendChild(wrap);
+
+    } else {
+      var fw = el("div", "fillwrap");
+      var input = el("input", "fill");
+      input.type = "text";
+      input.placeholder = "在这里写英文";
+      input.autocomplete = "off";
+      input.spellcheck = false;
+      input.dataset.qid = q.id;
+      input.value = st ? (st.value || "") : "";
+      if (judged) input.classList.add(st.ok ? "ok" : "bad");
+
+      var btn = el("button", "primary");
+      btn.type = "button";
+      btn.textContent = judged ? "重判" : "检查";
+
+      function judge(){
+        var v = input.value.trim();
+        if (!v) { input.focus(); return; }
+        state[q.id] = { value: v, ok: isCorrect(q, v) };
+        save(); redrawCard(card, q, idx); updateStats();
+      }
+      btn.addEventListener("click", judge);
+      input.addEventListener("keydown", function(e){
+        if (e.key === "Enter"){ e.preventDefault(); judge(); }
+      });
+      input.addEventListener("input", function(){
+        if (state[q.id] && typeof state[q.id].ok === "boolean"){
+          delete state[q.id]; save();
+          card.classList.remove("ok", "bad");
+          input.classList.remove("ok", "bad");
+          var fb = card.querySelector(".fb");
+          if (fb) fb.remove();
+          updateStats();
+        }
+      });
+      fw.appendChild(input);
+      fw.appendChild(btn);
+      card.appendChild(fw);
+    }
+
+    if (judged){
+      var fb = el("div", "fb " + (st.ok ? "ok" : "bad"));
+      if (st.ok){
+        fb.appendChild(document.createTextNode("✓ 正确"));
+      } else {
+        fb.appendChild(document.createTextNode("✗ 再想想　答案："));
+        var ans = el("span", "ans");
+        ans.textContent = q.answers[0];
+        fb.appendChild(ans);
+      }
+      if (q.explain){
+        var ex = el("span", "ex");
+        ex.textContent = q.explain;
+        fb.appendChild(ex);
+      }
+      card.appendChild(fb);
+    }
+
+    return card;
+  }
+
+  function redrawCard(oldCard, q, idx){
+    var fresh = renderCard(q, idx);
+    oldCard.parentNode.replaceChild(fresh, oldCard);
+  }
+
+  var order = {};
+  function build(){
+    app.innerHTML = "";
+    var n = 0;
+    PARTS.forEach(function(part){
+      var sec = el("section", "part");
+      var h = el("h2"); h.textContent = part.name; sec.appendChild(h);
+      var d = el("p", "pdesc"); d.textContent = part.desc; sec.appendChild(d);
+      part.items.forEach(function(q){
+        n += 1;
+        order[q.id] = n;
+        sec.appendChild(renderCard(q, n));
+      });
+      app.appendChild(sec);
+    });
+    updateStats();
+  }
+
+  function updateStats(){
+    var answered = 0, right = 0;
+    ALL.forEach(function(q){
+      var st = state[q.id];
+      if (st && typeof st.ok === "boolean"){
+        answered += 1;
+        if (st.ok) right += 1;
+      }
+    });
+    var total = ALL.length;
+    document.getElementById("score").textContent = right;
+    document.getElementById("total").textContent = total;
+    document.getElementById("pct").textContent = Math.round(answered / total * 100) + "%";
+    document.getElementById("barfill").style.width = (answered / total * 100) + "%";
+  }
+
+  document.getElementById("btnCheckAll").addEventListener("click", function(){
+    app.querySelectorAll("input.fill").forEach(function(inp){
+      var id = inp.dataset.qid;
+      if (!id) return;
+      if (state[id] && typeof state[id].ok === "boolean") return;
+      var v = inp.value.trim();
+      if (!v) return;
+      var q = null;
+      for (var i=0;i<ALL.length;i++){ if (ALL[i].id === id){ q = ALL[i]; break; } }
+      if (!q) return;
+      state[id] = { value: v, ok: isCorrect(q, v) };
+    });
+    save(); build();
+  });
+
+  document.getElementById("btnRedo").addEventListener("click", function(){
+    ALL.forEach(function(q){
+      var st = state[q.id];
+      if (st && st.ok === false) delete state[q.id];
+    });
+    save(); build();
+  });
+
+  document.getElementById("btnReset").addEventListener("click", function(){
+    if (!confirm("清空全部作答，重新开始？")) return;
+    state = {}; save(); build();
+  });
+
+  build();
+})();
+</script>
+</body>
+</html>

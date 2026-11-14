@@ -1255,6 +1255,14 @@
   "group": "The Big Bed"
  },
  {
+  "en": "rod",
+  "zh": "杆、棒",
+  "src": [
+   "The Big Fish"
+  ],
+  "group": "The Big Fish"
+ },
+ {
   "en": "fence",
   "zh": "篱笆",
   "src": [
@@ -1285,6 +1293,54 @@
    "The Race to the Lake"
   ],
   "group": "The Race to the Lake"
+ },
+ {
+  "en": "amphibians",
+  "zh": "两栖动物（水陆两生，amphi- 是「两边」）",
+  "src": [
+   "Tree Frogs"
+  ],
+  "group": "Tree Frogs"
+ },
+ {
+  "en": "gills",
+  "zh": "鳃（鱼和蝌蚪在水里呼吸的器官）",
+  "src": [
+   "Tree Frogs"
+  ],
+  "group": "Tree Frogs"
+ },
+ {
+  "en": "grip",
+  "zh": "紧紧抓住、抓牢",
+  "src": [
+   "Tree Frogs"
+  ],
+  "group": "Tree Frogs"
+ },
+ {
+  "en": "inflate",
+  "zh": "充气、鼓起（反义 deflate 放气）",
+  "src": [
+   "Tree Frogs"
+  ],
+  "group": "Tree Frogs"
+ },
+ {
+  "en": "pads",
+  "zh": "肉垫、吸盘（这里指树蛙脚趾末端的吸盘）",
+  "src": [
+   "Tree Frogs"
+  ],
+  "group": "Tree Frogs"
+ },
+ {
+  "en": "tadpoles",
+  "zh": "蝌蚪",
+  "src": [
+   "Tree Frogs"
+  ],
+  "group": "Tree Frogs"
  },
  {
   "en": "wagon",
