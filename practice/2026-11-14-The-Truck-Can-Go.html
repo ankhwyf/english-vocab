@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>英语练习 · The Truck Can Go</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --ink:#1b1f24; --sub:#5b6470;
+    --line:#e3e6ea; --blue:#3563e9; --blue-soft:#eef2fe;
+    --ok:#0f7a3d; --ok-soft:#e9f7ef; --ok-line:#12a150;
+    --bad:#b42318; --bad-soft:#fdecea; --bad-line:#e5484d;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:16px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .bar{
+    position:sticky; top:0; z-index:10; background:rgba(255,255,255,.92);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
+  }
+  .bar-in{max-width:760px; margin:0 auto; padding:12px 20px 10px}
+  .row{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .title{font-weight:650; font-size:15px; letter-spacing:.2px}
+  .meta{margin-left:auto; display:flex; gap:10px; align-items:baseline; font-size:13px; color:var(--sub)}
+  .meta b{font-size:15px; color:var(--ink); font-variant-numeric:tabular-nums}
+  .meta #pct{color:#8b94a1; padding-left:8px; border-left:1px solid var(--line)}
+  .progress{height:6px; background:#eceff3; border-radius:99px; margin:10px 0 8px; overflow:hidden}
+  .progress i{display:block; height:100%; width:0; background:linear-gradient(90deg,#4f7cf0,#12a150); border-radius:99px; transition:width .25s ease}
+  .acts{display:flex; gap:8px; flex-wrap:wrap}
+  button{
+    font:inherit; font-size:13.5px; padding:7px 14px; border-radius:9px; cursor:pointer;
+    border:1px solid var(--line); background:#fff; color:var(--ink);
+  }
+  button:hover{border-color:#c9cfd8; background:#fafbfc}
+  button.primary{background:var(--blue); border-color:var(--blue); color:#fff}
+  button.primary:hover{background:#2b55d4}
+  button.ghost{color:var(--sub)}
+  main{max-width:760px; margin:0 auto; padding:26px 20px 60px}
+  .part{margin-bottom:34px; scroll-margin-top:104px}
+  .part h2{font-size:17px; margin:0 0 4px; letter-spacing:.3px}
+  .part .pdesc{margin:0 0 14px; color:var(--sub); font-size:13.5px}
+  .card{
+    background:var(--card); border-radius:var(--radius); padding:15px 18px 13px;
+    margin-bottom:12px; border-left:4px solid transparent;
+    box-shadow:0 1px 2px rgba(16,24,40,.05), 0 2px 6px rgba(16,24,40,.05);
+  }
+  .card.ok{border-left-color:var(--ok-line)}
+  .card.bad{border-left-color:var(--bad-line)}
+  .qhead{display:flex; gap:10px; align-items:flex-start}
+  .no{
+    flex:0 0 26px; height:26px; border-radius:50%; background:#eef1f5; color:var(--sub);
+    font-size:12.5px; font-weight:600; display:grid; place-items:center; margin-top:2px;
+    font-variant-numeric:tabular-nums;
+  }
+  .card.ok .no{background:var(--ok-soft); color:var(--ok)}
+  .card.bad .no{background:var(--bad-soft); color:var(--bad)}
+  .stem{flex:1; min-width:0}
+  .stem .zh{color:var(--sub); font-size:13.5px; display:block; margin-top:2px}
+  .hint{display:inline-block; margin-left:6px; padding:1px 7px; border-radius:6px;
+        background:#f1f3f6; color:#556; font-size:12.5px; white-space:nowrap}
+  .opts{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 0 36px}
+  .opt{
+    font:inherit; font-size:15.5px; padding:7px 18px; border-radius:10px;
+    border:1.5px solid var(--line); background:#fff; cursor:pointer;
+  }
+  .opt:hover{border-color:#b9c6e6; background:#fbfcff}
+  .opt.sel{border-color:var(--blue); background:var(--blue-soft)}
+  .opt.correct{border-color:var(--ok-line); background:var(--ok-soft); color:var(--ok); font-weight:600}
+  .opt.wrong{border-color:var(--bad-line); background:var(--bad-soft); color:var(--bad)}
+  .fillwrap{margin:12px 0 0 36px; display:flex; gap:8px; flex-wrap:wrap}
+  input.fill{
+    flex:1 1 320px; max-width:520px; min-width:200px; font:inherit; font-size:15.5px; padding:9px 12px;
+    border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--ink);
+  }
+  input.fill:focus{outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(53,99,233,.12)}
+  input.fill.ok{border-color:var(--ok-line); background:var(--ok-soft)}
+  input.fill.bad{border-color:var(--bad-line); background:var(--bad-soft)}
+  .fb{margin:10px 0 0 36px; font-size:13.8px; line-height:1.7}
+  .fb.ok{color:var(--ok)}
+  .fb.bad{color:var(--bad)}
+  .fb .ans{font-weight:600}
+  .fb .ex{display:block; color:var(--sub); margin-top:3px}
+  footer{max-width:760px; margin:0 auto; padding:0 20px 50px; color:var(--sub); font-size:12.5px}
+  .empty{color:var(--sub)}
+  @media (max-width:560px){
+    .bar-in{padding:10px 14px 8px}
+    main{padding:18px 12px 40px}
+    .card{padding:14px 14px 12px}
+    .opts,.fillwrap,.fb{margin-left:0}
+    .opt{flex:1 1 auto; text-align:center}
+    .meta{font-size:12px}
+  }
+  @media print{
+    .bar,.acts,footer{display:none}
+    body{background:#fff}
+    .card{break-inside:avoid; box-shadow:none; border:1px solid #ddd}
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="row">
+      <div class="title">英语练习 · 词族三课</div>
+      <div class="meta">
+        <span>得分 <b id="score">0</b> / <span id="total">28</span></span>
+        <span id="pct">0%</span>
+      </div>
+    </div>
+    <div class="progress"><i id="barfill"></i></div>
+    <div class="row acts">
+      <button id="btnCheckAll" class="primary">检查全部</button>
+      <button id="btnRedo">重做错题</button>
+      <button id="btnReset" class="ghost">清空重做</button>
+    </div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  本课来自 Read and Play: The Truck Can Go（字母 T）。答案不区分大小写和标点，拼写必须正确；中译英换一种说法也算对。
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var PARTS = [
+ {
+  "name": "一、选词填空（每词只用一次）",
+  "desc": "词库：tape / tie / top / toast / truck / rock / stem / mail。后三个是以前学过的旧词，看看还记得吗。",
+  "items": [
+   {
+    "id": "p1q1",
+    "type": "fill",
+    "stem": "Put the ______ in the truck. It is sticky and we use it to stick paper.",
+    "answers": [
+     "tape"
+    ],
+    "explain": "胶带，用来粘东西。"
+   },
+   {
+    "id": "p1q2",
+    "type": "fill",
+    "stem": "Put the ______ in the truck. Dad wears it to work.",
+    "answers": [
+     "tie"
+    ],
+    "explain": "领带。wear a tie 是「戴领带」。"
+   },
+   {
+    "id": "p1q3",
+    "type": "fill",
+    "stem": "Put the ______ in the truck. It can spin.",
+    "answers": [
+     "top"
+    ],
+    "explain": "陀螺会转（spin），所以是 top，不是「顶部」。"
+   },
+   {
+    "id": "p1q4",
+    "type": "fill",
+    "stem": "Put the ______ in the truck. We eat it for breakfast.",
+    "answers": [
+     "toast"
+    ],
+    "explain": "吐司，早餐吃的东西。不可数。"
+   },
+   {
+    "id": "p1q5",
+    "type": "fill",
+    "stem": "Now the ______ can go!",
+    "answers": [
+     "truck"
+    ],
+    "explain": "装完货，卡车才能开动。"
+   },
+   {
+    "id": "p1q6",
+    "type": "fill",
+    "stem": "Put the ______ in the truck. It is heavy and gray.",
+    "answers": [
+     "rock"
+    ],
+    "explain": "旧词复现：rock 岩石。注意它是可数名词，这里单数用 the。"
+   },
+   {
+    "id": "p1q7",
+    "type": "fill",
+    "stem": "Put the ______ in the truck. It is green and it holds the leaves.",
+    "answers": [
+     "stem"
+    ],
+    "explain": "旧词复现：stem 茎，叶子长在茎上。"
+   },
+   {
+    "id": "p1q8",
+    "type": "fill",
+    "stem": "Put the ______ in the truck. The postman brings it.",
+    "answers": [
+     "mail"
+    ],
+    "explain": "旧词复现：mail 邮件。male（雄的）和它同音，别写混。"
+   }
+  ]
+ },
+ {
+  "name": "二、词形变化（用括号里词的正确形式填空）",
+  "desc": "只填括号里那个词变好之后的样子。注意 can 后面永远用原形。",
+  "items": [
+   {
+    "id": "p2q1",
+    "type": "fill",
+    "stem": "Now the truck can ______ (go).",
+    "answers": [
+     "go"
+    ],
+    "explain": "can 后面永远跟动词原形，不能写 goes。"
+   },
+   {
+    "id": "p2q2",
+    "type": "fill",
+    "stem": "The truck ______ (go) fast.",
+    "answers": [
+     "goes"
+    ],
+    "explain": "没有 can 时，第三人称单数要加 -es。"
+   },
+   {
+    "id": "p2q3",
+    "type": "fill",
+    "stem": "Put the two ______ (tie) in the truck.",
+    "answers": [
+     "ties"
+    ],
+    "explain": "two 后面用复数，tie → ties。"
+   },
+   {
+    "id": "p2q4",
+    "type": "fill",
+    "stem": "These ______ (truck) are big.",
+    "answers": [
+     "trucks"
+    ],
+    "explain": "These 后面跟复数。"
+   },
+   {
+    "id": "p2q5",
+    "type": "fill",
+    "stem": "He ______ (put) the tape in the box every day.",
+    "answers": [
+     "puts"
+    ],
+    "explain": "主语 He 是第三人称单数，put → puts。"
+   },
+   {
+    "id": "p2q6",
+    "type": "fill",
+    "stem": "We need two pieces of ______ (toast).",
+    "answers": [
+     "toast"
+    ],
+    "explain": "toast 不可数，数它要借 piece，toast 本身不加 -s。"
+   }
+  ]
+ },
+ {
+  "name": "三、填介词或冠词",
+  "desc": "每题填一个词。in 在里、on 在上、under 在下；a / an / the 看是泛指还是特指。",
+  "items": [
+   {
+    "id": "p3q1",
+    "type": "fill",
+    "stem": "Put the tape ______ the truck.",
+    "answers": [
+     "in"
+    ],
+    "explain": "放进里面用 in。"
+   },
+   {
+    "id": "p3q2",
+    "type": "fill",
+    "stem": "The top is ______ the floor.",
+    "answers": [
+     "on"
+    ],
+    "explain": "在地板表面用 on。"
+   },
+   {
+    "id": "p3q3",
+    "type": "fill",
+    "stem": "Put the toast ______ the plate.",
+    "answers": [
+     "on"
+    ],
+    "explain": "放在盘子上，接触表面用 on。"
+   },
+   {
+    "id": "p3q4",
+    "type": "fill",
+    "stem": "This is ______ apple.",
+    "answers": [
+     "an"
+    ],
+    "explain": "apple 以元音音素开头，用 an。"
+   },
+   {
+    "id": "p3q5",
+    "type": "fill",
+    "stem": "______ truck is blue.",
+    "answers": [
+     "The"
+    ],
+    "explain": "双方都知道是哪辆车，用 the。"
+   },
+   {
+    "id": "p3q6",
+    "type": "fill",
+    "stem": "The dog is ______ the truck. We cannot see it.",
+    "answers": [
+     "under"
+    ],
+    "explain": "看不见，说明在车底下：under。"
+   }
+  ]
+ },
+ {
+  "name": "四、句型转换",
+  "desc": "写改写后的整句，句末不用打问号。",
+  "items": [
+   {
+    "id": "p4q1",
+    "type": "fill",
+    "stem": "Put the tape in the truck.",
+    "answers": [
+     "do not put the tape in the truck",
+     "don't put the tape in the truck"
+    ],
+    "explain": "否定祈使句用 Do not + 动词原形，不是 not put。",
+    "sub": "改否定祈使句"
+   },
+   {
+    "id": "p4q2",
+    "type": "fill",
+    "stem": "The truck can go.",
+    "answers": [
+     "can the truck go",
+     "can the truck go?"
+    ],
+    "explain": "把 can 提到主语前，其余不动。",
+    "sub": "改一般疑问句"
+   },
+   {
+    "id": "p4q3",
+    "type": "fill",
+    "stem": "The truck can go.",
+    "answers": [
+     "the truck cannot go",
+     "the truck can not go",
+     "the truck can't go"
+    ],
+    "explain": "can 的否定是 cannot / can not / can't，不能借 don't。",
+    "sub": "改否定句"
+   },
+   {
+    "id": "p4q4",
+    "type": "fill",
+    "stem": "Put the tie in the truck.",
+    "answers": [
+     "where do you put the tie",
+     "where do we put the tie"
+    ],
+    "explain": "问地点用 Where，后面接 do you put...，用的是一般现在时。",
+    "sub": "对 in the truck 提问"
+   }
+  ]
+ },
+ {
+  "name": "五、连词成句",
+  "desc": "把词重新排好，写成完整句子。",
+  "items": [
+   {
+    "id": "p5q1",
+    "type": "fill",
+    "stem": "the / put / tape / in / truck / the",
+    "answers": [
+     "put the tape in the truck",
+     "put the tape in the truck."
+    ],
+    "explain": "祈使句以动词开头，两个 the 各管一个名词。"
+   },
+   {
+    "id": "p5q2",
+    "type": "fill",
+    "stem": "can / now / go / the / truck",
+    "answers": [
+     "now the truck can go",
+     "the truck can go now",
+     "now the truck can go.",
+     "the truck can go now."
+    ],
+    "explain": "now 放句首或句尾都行。"
+   },
+   {
+    "id": "p5q3",
+    "type": "fill",
+    "stem": "is / the / in / top / truck / the",
+    "answers": [
+     "the top is in the truck",
+     "the top is in the truck."
+    ],
+    "explain": "主语 the top + is + 地点。"
+   }
+  ]
+ },
+ {
+  "name": "六、合并句子",
+  "desc": "用括号给的词把两句并成一句。",
+  "items": [
+   {
+    "id": "p6q1",
+    "type": "fill",
+    "stem": "Put the tape in the truck. Put the tie in the truck.",
+    "answers": [
+     "put the tape and the tie in the truck"
+    ],
+    "explain": "两个名词共用一个 Put ... in the truck，and 连接并列的名词。",
+    "sub": "用 and 合并"
+   },
+   {
+    "id": "p6q2",
+    "type": "fill",
+    "stem": "The truck is full. The truck can go.",
+    "answers": [
+     "the truck is full so it can go",
+     "the truck is full, so it can go"
+    ],
+    "explain": "so 表结果；第二句的 the truck 换成 it 更自然。",
+    "sub": "用 so 合并"
+   },
+   {
+    "id": "p6q3",
+    "type": "fill",
+    "stem": "Put the toast in the truck. We can eat it later.",
+    "answers": [
+     "put the toast in the truck because we can eat it later"
+    ],
+    "explain": "because 引导原因从句，放在主句后面不用逗号。",
+    "sub": "用 because 合并"
+   },
+   {
+    "id": "p6q4",
+    "type": "fill",
+    "stem": "The box is heavy. I cannot carry it.",
+    "answers": [
+     "the box is so heavy that i cannot carry it",
+     "the box is so heavy that i can't carry it"
+    ],
+    "explain": "so + 形容词 + that 从句。注意是 so heavy，不是 such heavy。",
+    "sub": "用 so ... that 合并"
+   }
+  ]
+ },
+ {
+  "name": "七、改错（每句一处错误）",
+  "desc": "每题只有一处错。写出改好后的整句。",
+  "items": [
+   {
+    "id": "p7q1",
+    "type": "fill",
+    "stem": "Put the tape in truck.",
+    "answers": [
+     "put the tape in the truck"
+    ],
+    "explain": "truck 前面要加 the，特指这辆卡车。"
+   },
+   {
+    "id": "p7q2",
+    "type": "fill",
+    "stem": "Now the truck can goes!",
+    "answers": [
+     "now the truck can go"
+    ],
+    "explain": "can 后面用原形 go。"
+   },
+   {
+    "id": "p7q3",
+    "type": "fill",
+    "stem": "The tops is in the truck.",
+    "answers": [
+     "the top is in the truck"
+    ],
+    "explain": "只有一个陀螺，top 用单数，后面的 is 才配得上。"
+   },
+   {
+    "id": "p7q4",
+    "type": "fill",
+    "stem": "I can to put the tie in the truck.",
+    "answers": [
+     "i can put the tie in the truck"
+    ],
+    "explain": "can 后面不加 to。"
+   },
+   {
+    "id": "p7q5",
+    "type": "fill",
+    "stem": "Two toast are in the truck.",
+    "answers": [
+     "two pieces of toast are in the truck"
+    ],
+    "explain": "toast 不可数，要借 pieces of。"
+   },
+   {
+    "id": "p7q6",
+    "type": "fill",
+    "stem": "The truck can go now?",
+    "answers": [
+     "can the truck go now"
+    ],
+    "explain": "疑问句要把 can 提到主语前面。"
+   }
+  ]
+ },
+ {
+  "name": "八、判断对错（T / F）",
+  "desc": "按课文内容判断，T 对 F 错。",
+  "items": [
+   {
+    "id": "p8q1",
+    "type": "choice",
+    "stem": "Four things go in the truck.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "t",
+     "true"
+    ],
+    "explain": "tape、tie、top、toast，正好四样。"
+   },
+   {
+    "id": "p8q2",
+    "type": "choice",
+    "stem": "The tape is in the truck.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "t",
+     "true"
+    ],
+    "explain": "第一句就是 Put the tape in the truck。"
+   },
+   {
+    "id": "p8q3",
+    "type": "choice",
+    "stem": "The tie is on the truck.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "f",
+     "false"
+    ],
+    "explain": "是 in the truck（放进车斗里），不是 on。"
+   },
+   {
+    "id": "p8q4",
+    "type": "choice",
+    "stem": "The truck cannot go at the end.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "f",
+     "false"
+    ],
+    "explain": "最后一句是 Now the truck can go，能走了。"
+   },
+   {
+    "id": "p8q5",
+    "type": "choice",
+    "stem": "Toast is something we eat.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "t",
+     "true"
+    ],
+    "explain": "toast 是吐司、烤面包，当然能吃。"
+   }
+  ]
+ },
+ {
+  "name": "九、英译中（选最准确的一句）",
+  "desc": "先自己想一遍再选。三个选项里只有一个全对，其余各错一处。",
+  "items": [
+   {
+    "id": "p9q1",
+    "type": "choice",
+    "stem": "Put the top in the truck.",
+    "options": [
+     "把陀螺放进卡车里。",
+     "把盖子放在卡车上。",
+     "把顶部放进卡车里。"
+    ],
+    "answers": [
+     "把陀螺放进卡车里。"
+    ],
+    "explain": "看图：那个尖尖的东西是 spinning top（陀螺），不是「顶部」也不是「盖子」。"
+   },
+   {
+    "id": "p9q2",
+    "type": "choice",
+    "stem": "Now the truck can go!",
+    "options": [
+     "现在卡车可以走了！",
+     "现在卡车将要走了。",
+     "现在拖拉机可以开了。"
+    ],
+    "answers": [
+     "现在卡车可以走了！"
+    ],
+    "explain": "can 是「可以、有能力」，不是 will（将要）；truck 是卡车，tractor 才是拖拉机。"
+   },
+   {
+    "id": "p9q3",
+    "type": "choice",
+    "stem": "Put the toast in the truck.",
+    "options": [
+     "把吐司放进卡车里。",
+     "把面包机放进卡车里。",
+     "把吐司放在卡车上。"
+    ],
+    "answers": [
+     "把吐司放进卡车里。"
+    ],
+    "explain": "in 是放进里面，on 才是放在上面；toast 是吐司，面包机是 toaster。"
+   }
+  ]
+ },
+ {
+  "name": "十、中译英（仿写）",
+  "desc": "用这一课的句型和学过的词造句子。括号里是提示词。",
+  "items": [
+   {
+    "id": "p10q1",
+    "type": "fill",
+    "stem": "把胶带放进卡车里。",
+    "sub": "Put ... in ...",
+    "answers": [
+     "Put the tape in the truck."
+    ],
+    "explain": ""
+   },
+   {
+    "id": "p10q2",
+    "type": "fill",
+    "stem": "把领带放进卡车里。",
+    "sub": "tie",
+    "answers": [
+     "Put the tie in the truck."
+    ],
+    "explain": ""
+   },
+   {
+    "id": "p10q3",
+    "type": "fill",
+    "stem": "现在卡车可以走了！",
+    "sub": "Now ... can ...",
+    "answers": [
+     "Now the truck can go!",
+     "Now the truck can go."
+    ],
+    "explain": ""
+   },
+   {
+    "id": "p10q4",
+    "type": "fill",
+    "stem": "把石头放进箱子里。",
+    "sub": "rock",
+    "answers": [
+     "Put the rock in the box."
+    ],
+    "explain": ""
+   },
+   {
+    "id": "p10q5",
+    "type": "fill",
+    "stem": "把陀螺放在桌子上。",
+    "sub": "top / on",
+    "answers": [
+     "Put the top on the table."
+    ],
+    "explain": ""
+   },
+   {
+    "id": "p10q6",
+    "type": "fill",
+    "stem": "箱子里有一根树枝，所以箱子不轻。",
+    "sub": "stem / so",
+    "answers": [
+     "There is a stem in the box, so the box is not light.",
+     "The box has a stem in it, so it is not light."
+    ],
+    "explain": ""
+   },
+   {
+    "id": "p10q7",
+    "type": "fill",
+    "stem": "卡车装满了，所以它开不动。",
+    "sub": "full / so",
+    "answers": [
+     "The truck is full, so it cannot go.",
+     "The truck is full, so it can't go."
+    ],
+    "explain": ""
+   }
+  ]
+ }
+];
+
+  var KEY = "truck-go-practice-v1";
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch(e){ state = {}; }
+
+  var ALL = [];
+  PARTS.forEach(function(p){ p.items.forEach(function(q){ ALL.push(q); }); });
+
+  function norm(s){
+    return String(s == null ? "" : s)
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[.,!?;:]/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  }
+  function isCorrect(q, val){
+    var v = norm(val);
+    if (!v) return false;
+    for (var i=0;i<q.answers.length;i++){
+      if (norm(q.answers[i]) === v) return true;
+    }
+    return false;
+  }
+  function save(){
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
+  }
+
+  var app = document.getElementById("app");
+
+  function el(tag, cls){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    return e;
+  }
+
+  function renderCard(q, idx){
+    var st = state[q.id] || null;
+    var judged = st && typeof st.ok === "boolean";
+
+    var card = el("div", "card" + (judged ? (st.ok ? " ok" : " bad") : ""));
+
+    var head = el("div", "qhead");
+    var no = el("div", "no");
+    no.textContent = String(idx);
+    var stem = el("div", "stem");
+    var s = el("div");
+    s.textContent = q.stem;
+    stem.appendChild(s);
+
+    if (q.sub){
+      var sub = el("span", "zh");
+      var t = q.sub.replace(/^提示：/, "");
+      if (/^提示/.test(q.sub)){
+        var hint = el("span", "hint");
+        hint.textContent = t;
+        sub.appendChild(document.createTextNode("用上 "));
+        sub.appendChild(hint);
+      } else {
+        sub.textContent = q.sub;
+      }
+      stem.appendChild(sub);
+    }
+    head.appendChild(no);
+    head.appendChild(stem);
+    card.appendChild(head);
+
+    if (q.type === "choice"){
+      var wrap = el("div", "opts");
+      q.options.forEach(function(opt){
+        var b = el("button", "opt");
+        b.type = "button";
+        b.textContent = opt;
+        if (st && st.value === opt){
+          b.classList.add("sel");
+          if (judged) b.classList.add(st.ok ? "correct" : "wrong");
+        }
+        if (judged && !st.ok && q.answers.indexOf(opt) >= 0) b.classList.add("correct");
+        b.addEventListener("click", function(){
+          var ok = isCorrect(q, opt);
+          state[q.id] = { value: opt, ok: ok };
+          save(); redrawCard(card, q, idx); updateStats();
+        });
+        wrap.appendChild(b);
+      });
+      card.appendChild(wrap);
+
+    } else {
+      var fw = el("div", "fillwrap");
+      var input = el("input", "fill");
+      input.type = "text";
+      input.placeholder = "在这里写英文";
+      input.autocomplete = "off";
+      input.spellcheck = false;
+      input.dataset.qid = q.id;
+      input.value = st ? (st.value || "") : "";
+      if (judged) input.classList.add(st.ok ? "ok" : "bad");
+
+      var btn = el("button", "primary");
+      btn.type = "button";
+      btn.textContent = judged ? "重判" : "检查";
+
+      function judge(){
+        var v = input.value.trim();
+        if (!v) { input.focus(); return; }
+        state[q.id] = { value: v, ok: isCorrect(q, v) };
+        save(); redrawCard(card, q, idx); updateStats();
+      }
+      btn.addEventListener("click", judge);
+      input.addEventListener("keydown", function(e){
+        if (e.key === "Enter"){ e.preventDefault(); judge(); }
+      });
+      input.addEventListener("input", function(){
+        if (state[q.id] && typeof state[q.id].ok === "boolean"){
+          delete state[q.id]; save();
+          card.classList.remove("ok", "bad");
+          input.classList.remove("ok", "bad");
+          var fb = card.querySelector(".fb");
+          if (fb) fb.remove();
+          updateStats();
+        }
+      });
+      fw.appendChild(input);
+      fw.appendChild(btn);
+      card.appendChild(fw);
+    }
+
+    if (judged){
+      var fb = el("div", "fb " + (st.ok ? "ok" : "bad"));
+      if (st.ok){
+        fb.appendChild(document.createTextNode("✓ 正确"));
+      } else {
+        fb.appendChild(document.createTextNode("✗ 再想想　答案："));
+        var ans = el("span", "ans");
+        ans.textContent = q.answers[0];
+        fb.appendChild(ans);
+      }
+      if (q.explain){
+        var ex = el("span", "ex");
+        ex.textContent = q.explain;
+        fb.appendChild(ex);
+      }
+      card.appendChild(fb);
+    }
+
+    return card;
+  }
+
+  function redrawCard(oldCard, q, idx){
+    var fresh = renderCard(q, idx);
+    oldCard.parentNode.replaceChild(fresh, oldCard);
+  }
+
+  var order = {};
+  function build(){
+    app.innerHTML = "";
+    var n = 0;
+    PARTS.forEach(function(part){
+      var sec = el("section", "part");
+      var h = el("h2"); h.textContent = part.name; sec.appendChild(h);
+      var d = el("p", "pdesc"); d.textContent = part.desc; sec.appendChild(d);
+      part.items.forEach(function(q){
+        n += 1;
+        order[q.id] = n;
+        sec.appendChild(renderCard(q, n));
+      });
+      app.appendChild(sec);
+    });
+    updateStats();
+  }
+
+  function updateStats(){
+    var answered = 0, right = 0;
+    ALL.forEach(function(q){
+      var st = state[q.id];
+      if (st && typeof st.ok === "boolean"){
+        answered += 1;
+        if (st.ok) right += 1;
+      }
+    });
+    var total = ALL.length;
+    document.getElementById("score").textContent = right;
+    document.getElementById("total").textContent = total;
+    document.getElementById("pct").textContent = Math.round(answered / total * 100) + "%";
+    document.getElementById("barfill").style.width = (answered / total * 100) + "%";
+  }
+
+  document.getElementById("btnCheckAll").addEventListener("click", function(){
+    app.querySelectorAll("input.fill").forEach(function(inp){
+      var id = inp.dataset.qid;
+      if (!id) return;
+      if (state[id] && typeof state[id].ok === "boolean") return;
+      var v = inp.value.trim();
+      if (!v) return;
+      var q = null;
+      for (var i=0;i<ALL.length;i++){ if (ALL[i].id === id){ q = ALL[i]; break; } }
+      if (!q) return;
+      state[id] = { value: v, ok: isCorrect(q, v) };
+    });
+    save(); build();
+  });
+
+  document.getElementById("btnRedo").addEventListener("click", function(){
+    ALL.forEach(function(q){
+      var st = state[q.id];
+      if (st && st.ok === false) delete state[q.id];
+    });
+    save(); build();
+  });
+
+  document.getElementById("btnReset").addEventListener("click", function(){
+    if (!confirm("清空全部作答，重新开始？")) return;
+    state = {}; save(); build();
+  });
+
+  build();
+})();
+</script>
+</body>
+</html>
