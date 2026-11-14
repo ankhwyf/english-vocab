@@ -1,6 +1,6 @@
 # 英语生词库
 
-共 **248** 条，按课程分组。新增课文时用 scripts/add_words.py 追加。
+共 **255** 条，按课程分组。新增课文时用 scripts/add_words.py 追加。
 
 按课程分组，方便按主题出题。
 
@@ -190,6 +190,18 @@
 | rub | 擦、搓 |
 | tub | 浴缸、盆 |
 | tug | 用力拉、拽 |
+
+## Hedgehogs（7）
+
+| 单词 | 中文 |
+| --- | --- |
+| burrows | 动物自己挖的洞穴 |
+| cuddle up | 蜷缩、缩成一团 |
+| during the day | 在白天（during + 时间段） |
+| hedgehogs | 刺猬（hedge 树篱 + hog 猪） |
+| hoglets | 小刺猬（-let 是「小的」后缀） |
+| pointed snouts | 尖尖的口鼻部（snout 是动物突出的吻部） |
+| quills | （刺猬、豪猪背上的）硬刺 |
 
 ## Hello! I'm a Spider（1）
 

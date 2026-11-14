@@ -657,6 +657,62 @@
   "group": "Gum on the Rug"
  },
  {
+  "en": "burrows",
+  "zh": "动物自己挖的洞穴",
+  "src": [
+   "Hedgehogs"
+  ],
+  "group": "Hedgehogs"
+ },
+ {
+  "en": "cuddle up",
+  "zh": "蜷缩、缩成一团",
+  "src": [
+   "Hedgehogs"
+  ],
+  "group": "Hedgehogs"
+ },
+ {
+  "en": "during the day",
+  "zh": "在白天（during + 时间段）",
+  "src": [
+   "Hedgehogs"
+  ],
+  "group": "Hedgehogs"
+ },
+ {
+  "en": "hedgehogs",
+  "zh": "刺猬（hedge 树篱 + hog 猪）",
+  "src": [
+   "Hedgehogs"
+  ],
+  "group": "Hedgehogs"
+ },
+ {
+  "en": "hoglets",
+  "zh": "小刺猬（-let 是「小的」后缀）",
+  "src": [
+   "Hedgehogs"
+  ],
+  "group": "Hedgehogs"
+ },
+ {
+  "en": "pointed snouts",
+  "zh": "尖尖的口鼻部（snout 是动物突出的吻部）",
+  "src": [
+   "Hedgehogs"
+  ],
+  "group": "Hedgehogs"
+ },
+ {
+  "en": "quills",
+  "zh": "（刺猬、豪猪背上的）硬刺",
+  "src": [
+   "Hedgehogs"
+  ],
+  "group": "Hedgehogs"
+ },
+ {
   "en": "crawl",
   "zh": "爬（贴地、慢慢地爬，虫子和婴儿都用它）",
   "src": [
