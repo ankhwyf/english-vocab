@@ -1,6 +1,6 @@
 # 英语生词库
 
-共 **255** 条，按课程分组。新增课文时用 scripts/add_words.py 追加。
+共 **256** 条，按课程分组。新增课文时用 scripts/add_words.py 追加。
 
 按课程分组，方便按主题出题。
 
@@ -378,10 +378,11 @@
 | fit on | 装得下、挤得下 |
 | get on | 上去、爬上 |
 
-## The Big Fish（1）
+## The Big Fish（2）
 
 | 单词 | 中文 |
 | --- | --- |
+| net | 网（捞鱼的抄网、球网都叫 net） |
 | rod | 杆、棒 |
 
 ## The Frog And the Fly（2）

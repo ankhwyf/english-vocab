@@ -1,0 +1,1012 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>英语练习 · The Big Fish</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --ink:#1b1f24; --sub:#5b6470;
+    --line:#e3e6ea; --blue:#3563e9; --blue-soft:#eef2fe;
+    --ok:#0f7a3d; --ok-soft:#e9f7ef; --ok-line:#12a150;
+    --bad:#b42318; --bad-soft:#fdecea; --bad-line:#e5484d;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:16px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .bar{
+    position:sticky; top:0; z-index:10; background:rgba(255,255,255,.92);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
+  }
+  .bar-in{max-width:760px; margin:0 auto; padding:12px 20px 10px}
+  .row{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .title{font-weight:650; font-size:15px; letter-spacing:.2px}
+  .meta{margin-left:auto; display:flex; gap:10px; align-items:baseline; font-size:13px; color:var(--sub)}
+  .meta b{font-size:15px; color:var(--ink); font-variant-numeric:tabular-nums}
+  .meta #pct{color:#8b94a1; padding-left:8px; border-left:1px solid var(--line)}
+  .progress{height:6px; background:#eceff3; border-radius:99px; margin:10px 0 8px; overflow:hidden}
+  .progress i{display:block; height:100%; width:0; background:linear-gradient(90deg,#4f7cf0,#12a150); border-radius:99px; transition:width .25s ease}
+  .acts{display:flex; gap:8px; flex-wrap:wrap}
+  button{
+    font:inherit; font-size:13.5px; padding:7px 14px; border-radius:9px; cursor:pointer;
+    border:1px solid var(--line); background:#fff; color:var(--ink);
+  }
+  button:hover{border-color:#c9cfd8; background:#fafbfc}
+  button.primary{background:var(--blue); border-color:var(--blue); color:#fff}
+  button.primary:hover{background:#2b55d4}
+  button.ghost{color:var(--sub)}
+  main{max-width:760px; margin:0 auto; padding:26px 20px 60px}
+  .part{margin-bottom:34px; scroll-margin-top:104px}
+  .part h2{font-size:17px; margin:0 0 4px; letter-spacing:.3px}
+  .part .pdesc{margin:0 0 14px; color:var(--sub); font-size:13.5px}
+  .card{
+    background:var(--card); border-radius:var(--radius); padding:15px 18px 13px;
+    margin-bottom:12px; border-left:4px solid transparent;
+    box-shadow:0 1px 2px rgba(16,24,40,.05), 0 2px 6px rgba(16,24,40,.05);
+  }
+  .card.ok{border-left-color:var(--ok-line)}
+  .card.bad{border-left-color:var(--bad-line)}
+  .qhead{display:flex; gap:10px; align-items:flex-start}
+  .no{
+    flex:0 0 26px; height:26px; border-radius:50%; background:#eef1f5; color:var(--sub);
+    font-size:12.5px; font-weight:600; display:grid; place-items:center; margin-top:2px;
+    font-variant-numeric:tabular-nums;
+  }
+  .card.ok .no{background:var(--ok-soft); color:var(--ok)}
+  .card.bad .no{background:var(--bad-soft); color:var(--bad)}
+  .stem{flex:1; min-width:0}
+  .stem .zh{color:var(--sub); font-size:13.5px; display:block; margin-top:2px}
+  .hint{display:inline-block; margin-left:6px; padding:1px 7px; border-radius:6px;
+        background:#f1f3f6; color:#556; font-size:12.5px; white-space:nowrap}
+  .opts{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 0 36px}
+  .opt{
+    font:inherit; font-size:15.5px; padding:7px 18px; border-radius:10px;
+    border:1.5px solid var(--line); background:#fff; cursor:pointer;
+  }
+  .opt:hover{border-color:#b9c6e6; background:#fbfcff}
+  .opt.sel{border-color:var(--blue); background:var(--blue-soft)}
+  .opt.correct{border-color:var(--ok-line); background:var(--ok-soft); color:var(--ok); font-weight:600}
+  .opt.wrong{border-color:var(--bad-line); background:var(--bad-soft); color:var(--bad)}
+  .fillwrap{margin:12px 0 0 36px; display:flex; gap:8px; flex-wrap:wrap}
+  input.fill{
+    flex:1 1 320px; max-width:520px; min-width:200px; font:inherit; font-size:15.5px; padding:9px 12px;
+    border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--ink);
+  }
+  input.fill:focus{outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(53,99,233,.12)}
+  input.fill.ok{border-color:var(--ok-line); background:var(--ok-soft)}
+  input.fill.bad{border-color:var(--bad-line); background:var(--bad-soft)}
+  .fb{margin:10px 0 0 36px; font-size:13.8px; line-height:1.7}
+  .fb.ok{color:var(--ok)}
+  .fb.bad{color:var(--bad)}
+  .fb .ans{font-weight:600}
+  .fb .ex{display:block; color:var(--sub); margin-top:3px}
+  footer{max-width:760px; margin:0 auto; padding:0 20px 50px; color:var(--sub); font-size:12.5px}
+  .empty{color:var(--sub)}
+  @media (max-width:560px){
+    .bar-in{padding:10px 14px 8px}
+    main{padding:18px 12px 40px}
+    .card{padding:14px 14px 12px}
+    .opts,.fillwrap,.fb{margin-left:0}
+    .opt{flex:1 1 auto; text-align:center}
+    .meta{font-size:12px}
+  }
+  @media print{
+    .bar,.acts,footer{display:none}
+    body{background:#fff}
+    .card{break-inside:avoid; box-shadow:none; border:1px solid #ddd}
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="row">
+      <div class="title">英语练习 · 词族三课</div>
+      <div class="meta">
+        <span>得分 <b id="score">0</b> / <span id="total">28</span></span>
+        <span id="pct">0%</span>
+      </div>
+    </div>
+    <div class="progress"><i id="barfill"></i></div>
+    <div class="row acts">
+      <button id="btnCheckAll" class="primary">检查全部</button>
+      <button id="btnRedo">重做错题</button>
+      <button id="btnReset" class="ghost">清空重做</button>
+      <button id="btnExport" class="ghost">导出错题</button>
+    </div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  本课来自长句子-小故事：The Big Fish。答案不区分大小写和标点，拼写必须正确；仿写只要句型对、句子通顺就算对。最后四组是针对你前几篇错题的加强题。
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var PARTS = [
+ {
+  "name": "一、把句子补完整（动词用过去式）",
+  "desc": "只填括号里那个动词的过去式。got / sat / saw / hid 都不规则。",
+  "items": [
+   {
+    "id": "p1q1",
+    "type": "fill",
+    "stem": "Kodi ______ (get) her rod.",
+    "answers": [
+     "got"
+    ],
+    "explain": "get 的过去式是 got，不规则。"
+   },
+   {
+    "id": "p1q2",
+    "type": "fill",
+    "stem": "Kodi ______ (sit) with her rod.",
+    "answers": [
+     "sat"
+    ],
+    "explain": "sit - sat - sat。"
+   },
+   {
+    "id": "p1q3",
+    "type": "fill",
+    "stem": "Then she ______ (see) it.",
+    "answers": [
+     "saw"
+    ],
+    "explain": "see - saw - seen。"
+   },
+   {
+    "id": "p1q4",
+    "type": "fill",
+    "stem": "But the fish ______ (hide) in the mud.",
+    "answers": [
+     "hid"
+    ],
+    "explain": "hide - hid - hidden。"
+   },
+   {
+    "id": "p1q5",
+    "type": "fill",
+    "stem": "Kodi ______ (not see) it.",
+    "answers": [
+     "did not see",
+     "didn't see"
+    ],
+    "explain": "过去时否定：did not + 原形，不能写 did not saw。"
+   },
+   {
+    "id": "p1q6",
+    "type": "fill",
+    "stem": "Now we ______ (let) it go!",
+    "answers": [
+     "let"
+    ],
+    "explain": "let 三态同形；这里说说话当下的事，用原形。"
+   }
+  ]
+ },
+ {
+  "name": "二、给对话补上标点（把整句写出来）",
+  "desc": "注意三件事：引号包住说话内容、标点放在引号里面、名词主语放 said 后面。",
+  "items": [
+   {
+    "id": "p2q1",
+    "type": "fill",
+    "stem": "I will get a fish she said.",
+    "answers": [
+     "\"i will get a fish,\" she said",
+     "\"i will get a fish,\" she said."
+    ],
+    "explain": "引号包住她说的话，逗号放在引号里面。"
+   },
+   {
+    "id": "p2q2",
+    "type": "fill",
+    "stem": "A big fish she said.",
+    "answers": [
+     "\"a big fish!\" she said",
+     "\"a big fish!\" she said."
+    ],
+    "explain": "感叹句用感叹号，同样在引号里面。"
+   },
+   {
+    "id": "p2q3",
+    "type": "fill",
+    "stem": "How can I get the fish now said Kodi.",
+    "answers": [
+     "\"how can i get the fish now?\" said kodi",
+     "\"how can i get the fish now?\" said kodi."
+    ],
+    "explain": "问号在引号内；名词主语 Kodi 放在 said 后面（倒装）。"
+   },
+   {
+    "id": "p2q4",
+    "type": "fill",
+    "stem": "I got it with my net said Sandy.",
+    "answers": [
+     "\"i got it with my net!\" said sandy",
+     "\"i got it with my net!\" said sandy."
+    ],
+    "explain": "Sandy 是名词，所以 said Sandy，不能写 Sandy said 也别忘了引号。"
+   }
+  ]
+ },
+ {
+  "name": "三、选词填空（每词只用一次）",
+  "desc": "词库：rod / net / mud / fish / sad / for / with。",
+  "items": [
+   {
+    "id": "p3q1",
+    "type": "fill",
+    "stem": "Kodi got her ______. She will fish with it.",
+    "answers": [
+     "rod"
+    ],
+    "explain": "钓竿 rod。"
+   },
+   {
+    "id": "p3q2",
+    "type": "fill",
+    "stem": "Sandy got the fish with her ______.",
+    "answers": [
+     "net"
+    ],
+    "explain": "网 net，抄网。"
+   },
+   {
+    "id": "p3q3",
+    "type": "fill",
+    "stem": "The fish hid in the ______.",
+    "answers": [
+     "mud"
+    ],
+    "explain": "泥 mud，不可数。"
+   },
+   {
+    "id": "p3q4",
+    "type": "fill",
+    "stem": "\"I will get a big ______ for us.\"",
+    "answers": [
+     "fish"
+    ],
+    "explain": "fish 单复数同形。"
+   },
+   {
+    "id": "p3q5",
+    "type": "fill",
+    "stem": "Kodi did not get the fish. She was ______.",
+    "answers": [
+     "sad"
+    ],
+    "explain": "没抓到所以难过。"
+   },
+   {
+    "id": "p3q6",
+    "type": "fill",
+    "stem": "I will get a big fish ______ us.",
+    "answers": [
+     "for"
+    ],
+    "explain": "for + 人，表「为谁」。"
+   },
+   {
+    "id": "p3q7",
+    "type": "fill",
+    "stem": "I can get it ______ my net.",
+    "answers": [
+     "with"
+    ],
+    "explain": "with 表工具。"
+   }
+  ]
+ },
+ {
+  "name": "四、连成一句（用括号里的词）",
+  "desc": "用括号给的词把两句并成一句。",
+  "items": [
+   {
+    "id": "p4q1",
+    "type": "fill",
+    "stem": "Kodi did not see the fish. Sandy did.",
+    "answers": [
+     "kodi did not see the fish but sandy did",
+     "kodi did not see the fish, but sandy did"
+    ],
+    "explain": "but 连接两个相反的事实；后半句用代动词 did，不重复 see the fish。",
+    "sub": "用 but"
+   },
+   {
+    "id": "p4q2",
+    "type": "fill",
+    "stem": "Kodi sat. She sat.",
+    "answers": [
+     "she sat and sat",
+     "kodi sat and sat",
+     "kodi sat and sat."
+    ],
+    "explain": "同一个动词用 and 连起来重复，表示「一直」。",
+    "sub": "用 and，表示坐了很久"
+   },
+   {
+    "id": "p4q3",
+    "type": "fill",
+    "stem": "Kodi was sad. She wanted the fish.",
+    "answers": [
+     "kodi was sad because she wanted the fish"
+    ],
+    "explain": "because 引导原因，放在主句后不用逗号。",
+    "sub": "用 because"
+   }
+  ]
+ },
+ {
+  "name": "五、就划线部分提问",
+  "desc": "写疑问句，句末不用打问号。注意疑问词 + 助动词 + 主语 + 原形的顺序。",
+  "items": [
+   {
+    "id": "p5q1",
+    "type": "fill",
+    "stem": "Kodi got her rod.",
+    "answers": [
+     "what did kodi get",
+     "what did kodi get?"
+    ],
+    "explain": "问「什么东西」用 What + did + 主语 + 原形。",
+    "sub": "对 her rod 提问"
+   },
+   {
+    "id": "p5q2",
+    "type": "fill",
+    "stem": "The fish hid in the mud.",
+    "answers": [
+     "where did the fish hide",
+     "where did the fish hide?"
+    ],
+    "explain": "问地点用 Where；did 后面 hide 回原形。",
+    "sub": "对 in the mud 提问"
+   },
+   {
+    "id": "p5q3",
+    "type": "fill",
+    "stem": "Kodi was sad.",
+    "answers": [
+     "how did kodi feel",
+     "how was kodi",
+     "how did kodi feel?",
+     "how was kodi?"
+    ],
+    "explain": "问感受可以用 How did ... feel 或 How was ...。",
+    "sub": "对 sad 提问，问她感觉怎么样"
+   },
+   {
+    "id": "p5q4",
+    "type": "fill",
+    "stem": "Sandy got the fish with her net.",
+    "answers": [
+     "how did sandy get the fish",
+     "what did sandy get the fish with",
+     "how did sandy get the fish?",
+     "what did sandy get the fish with?"
+    ],
+    "explain": "问「用什么方式」可以用 How 或 What ... with。",
+    "sub": "对 with her net 提问"
+   }
+  ]
+ },
+ {
+  "name": "六、判断对错（T / F）",
+  "desc": "按故事内容判断，T 对 F 错。",
+  "items": [
+   {
+    "id": "p6q1",
+    "type": "choice",
+    "stem": "Kodi got a big fish.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "f",
+     "false"
+    ],
+    "explain": "抓到鱼的是 Sandy，Kodi 没钓到。"
+   },
+   {
+    "id": "p6q2",
+    "type": "choice",
+    "stem": "The fish hid in the mud.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "t",
+     "true"
+    ],
+    "explain": "第四段原句。"
+   },
+   {
+    "id": "p6q3",
+    "type": "choice",
+    "stem": "Sandy got the fish with a rod.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "f",
+     "false"
+    ],
+    "explain": "Sandy 用的是 net（网）。"
+   },
+   {
+    "id": "p6q4",
+    "type": "choice",
+    "stem": "Sandy let the fish go at the end.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "t",
+     "true"
+    ],
+    "explain": "最后一句 Now we let it go。"
+   },
+   {
+    "id": "p6q5",
+    "type": "choice",
+    "stem": "Kodi sat and waited with her rod.",
+    "options": [
+     "T",
+     "F"
+    ],
+    "answers": [
+     "t",
+     "true"
+    ],
+    "explain": "第二段 she sat and sat。"
+   }
+  ]
+ },
+ {
+  "name": "七、加强 1：逗号粘连（两个完整句子不能用逗号连）",
+  "desc": "这三个都是你上一篇里犯过的同类错。改法只有三种：改句号、加 and、加 but。",
+  "items": [
+   {
+    "id": "p7q1",
+    "type": "fill",
+    "stem": "The fish hid in the mud, Kodi did not see it.",
+    "answers": [
+     "the fish hid in the mud kodi did not see it",
+     "the fish hid in the mud. kodi did not see it",
+     "the fish hid in the mud, and kodi did not see it",
+     "the fish hid in the mud but kodi did not see it"
+    ],
+    "explain": "逗号不能连接两个完整句子。三条路：改成句号、加 and、加 but。你上次在 Tree Frogs 里连着两次这样写。"
+   },
+   {
+    "id": "p7q2",
+    "type": "fill",
+    "stem": "Some animal use their colors to hide.",
+    "answers": [
+     "some animals use their colors to hide"
+    ],
+    "explain": "some 后面跟可数名词复数：animals。这是你上次的原句。"
+   },
+   {
+    "id": "p7q3",
+    "type": "fill",
+    "stem": "Kodi was sad, she wanted the fish.",
+    "answers": [
+     "kodi was sad because she wanted the fish",
+     "kodi was sad. she wanted the fish",
+     "kodi was sad, and she wanted the fish"
+    ],
+    "explain": "同样的逗号粘连。用 because 最贴原意。"
+   }
+  ]
+ },
+ {
+  "name": "八、加强 2：指定句型必须用上（不能换成定语从句）",
+  "desc": "题目说用哪个句型，就必须用那个句型——换成 which 从句虽然语法没错，但句型练习就失效了。",
+  "items": [
+   {
+    "id": "p8q1",
+    "type": "fill",
+    "stem": "网帮 Sandy 抓到了鱼。",
+    "answers": [
+     "her net helped sandy get the fish",
+     "the net helped sandy get the fish",
+     "her net helped sandy to get the fish"
+    ],
+    "explain": "help sb. (to) do sth.，后面用原形。上次你把这句改写成了 which 从句，句型就丢了。",
+    "sub": "用 help ... do"
+   },
+   {
+    "id": "p8q2",
+    "type": "fill",
+    "stem": "这就是那条躲进泥里的鱼。",
+    "answers": [
+     "this is the fish that hid in the mud"
+    ],
+    "explain": "指定 that 就用 that；which 在语法上也行，但题目要求 that 时不能换。",
+    "sub": "用 that 定语从句"
+   },
+   {
+    "id": "p8q3",
+    "type": "fill",
+    "stem": "刺猬的刺很尖，所以别的动物不敢碰它。",
+    "answers": [
+     "the quills are so sharp that other animals do not touch the hedgehog",
+     "the quills are so sharp that other animals don't touch the hedgehog"
+    ],
+    "explain": "so + 形容词 + that 从句。上次你在 Spider 那课把 so...that 写成了别的结构。",
+    "sub": "用 so ... that"
+   }
+  ]
+ },
+ {
+  "name": "九、加强 3：疑问句语序（疑问词 + 助动词 + 主语 + 原形）",
+  "desc": "你上次写的 Where do the tie put? 就是这里出问题：主语选错、语序也错。",
+  "items": [
+   {
+    "id": "p9q1",
+    "type": "fill",
+    "stem": "把「我怎么才能抓到那条鱼」改成过去时",
+    "answers": [
+     "how could i get the fish then",
+     "how could i get the fish",
+     "how did i get the fish",
+     "how could i get the fish then?"
+    ],
+    "explain": "情态动词过去式 could，或改用 did。注意 can 要提到主语前面。",
+    "sub": "当时"
+   },
+   {
+    "id": "p9q2",
+    "type": "fill",
+    "stem": "Where do the tie put?",
+    "answers": [
+     "where do you put the tie",
+     "where do you put the tie?"
+    ],
+    "explain": "主语不能是 the tie（它是被放的东西）。正确是 Where do you put the tie? 你上次就错在这一处。",
+    "sub": "改对"
+   },
+   {
+    "id": "p9q3",
+    "type": "fill",
+    "stem": "问：Sandy 用什么抓到了鱼？",
+    "answers": [
+     "what did sandy get the fish with",
+     "what did sandy get the fish with?"
+    ],
+    "explain": "What ... with 问工具，介词 with 留在句尾。",
+    "sub": "用 What ... with"
+   }
+  ]
+ },
+ {
+  "name": "十、加强 4：介词（in / on / under / with）",
+  "desc": "被包住用 in，接触表面用 on，在下面用 under，工具用 with。",
+  "items": [
+   {
+    "id": "p10q1",
+    "type": "fill",
+    "stem": "鱼躲在泥里。",
+    "answers": [
+     "the fish hid in the mud"
+    ],
+    "explain": "被泥包住，用 in。"
+   },
+   {
+    "id": "p10q2",
+    "type": "fill",
+    "stem": "狗在卡车底下，我们看不见它。",
+    "answers": [
+     "the dog is under the truck"
+    ],
+    "explain": "在下面用 under，上次你选了 in。"
+   },
+   {
+    "id": "p10q3",
+    "type": "fill",
+    "stem": "Sandy 用网抓到了鱼。",
+    "answers": [
+     "sandy got the fish with her net"
+    ],
+    "explain": "工具用 with。"
+   },
+   {
+    "id": "p10q4",
+    "type": "fill",
+    "stem": "叶子长在茎上。",
+    "answers": [
+     "leaves grow on the stem",
+     "the leaves grow on the stem"
+    ],
+    "explain": "接触表面用 on。"
+   }
+  ]
+ },
+ {
+  "name": "十一、英译中（选最准确的一句）",
+  "desc": "先自己想一遍再选，三个选项里只有一个全对。",
+  "items": [
+   {
+    "id": "p11q1",
+    "type": "choice",
+    "stem": "Kodi sat with her rod. She sat and sat.",
+    "options": [
+     "Kodi 拿着钓竿坐着。她坐啊坐。",
+     "Kodi 和钓竿一起坐着。她坐下了。",
+     "Kodi 拿着网坐着。她坐了一会儿。"
+    ],
+    "answers": [
+     "Kodi 拿着钓竿坐着。她坐啊坐。"
+    ],
+    "explain": "with her rod 是「拿着」，不是「和钓竿一起」；sat and sat 表示坐了很久，不是「坐下」。"
+   },
+   {
+    "id": "p11q2",
+    "type": "choice",
+    "stem": "But the fish hid in the mud. Kodi did not see it.",
+    "options": [
+     "可那条鱼躲进了泥里。Kodi 没看见它。",
+     "可那条鱼躲进了泥里。Kodi 看见了它。",
+     "可那条鱼游进了水里。Kodi 没看见它。"
+    ],
+    "answers": [
+     "可那条鱼躲进了泥里。Kodi 没看见它。"
+    ],
+    "explain": "did not see 是否定「没看见」；mud 是泥，不是水。"
+   },
+   {
+    "id": "p11q3",
+    "type": "choice",
+    "stem": "\"I can get the fish,\" said Sandy. \"I can get it with my net.\"",
+    "options": [
+     "「我能抓到那条鱼，」Sandy 说，「我可以用网把它捞上来。」",
+     "「我要抓到那条鱼，」Sandy 说，「我可以用钓竿把它捞上来。」",
+     "「我能抓到那条鱼，」Kodi 说，「我可以用网把它捞上来。」"
+    ],
+    "answers": [
+     "「我能抓到那条鱼，」Sandy 说，「我可以用网把它捞上来。」"
+    ],
+    "explain": "can 是「能」不是「要」；net 是网（钓竿是 rod）；说话人是 Sandy，不是 Kodi。"
+   }
+  ]
+ },
+ {
+  "name": "十二、仿写（换汤不换药）",
+  "desc": "不译原文：只把里面的人、物、场景换掉，句型一字不动。这才是句型练习。",
+  "items": [
+   {
+    "id": "p12q1",
+    "type": "fill",
+    "stem": "仿照 Kodi got her rod. 写「Sandy 拿起了她的网。」",
+    "answers": [
+     "Sandy got her net",
+     "Sandy got her net."
+    ],
+    "explain": "got + 物主 + 名词，原句换了人和物，结构不动。"
+   },
+   {
+    "id": "p12q2",
+    "type": "fill",
+    "stem": "仿照 I will get a big fish for us. 写「我要给你们弄一个大蛋糕。」",
+    "answers": [
+     "I will get a big cake for you",
+     "I will get a big cake for you."
+    ],
+    "explain": "will + get + 形容词 + 名词 + for + 人。"
+   },
+   {
+    "id": "p12q3",
+    "type": "fill",
+    "stem": "仿照 She sat and sat. 写「他等啊等。」",
+    "answers": [
+     "He waited and waited",
+     "He waited and waited."
+    ],
+    "explain": "动词 + and + 同一个动词，表示时间拖得很长。"
+   },
+   {
+    "id": "p12q4",
+    "type": "fill",
+    "stem": "仿照 But the fish hid in the mud. 写「可那只猫躲到了床底下。」",
+    "answers": [
+     "But the cat hid under the bed",
+     "But the cat hid under the bed."
+    ],
+    "explain": "hid + 介词短语；换地点时介词也要跟着换（床底下用 under）。"
+   },
+   {
+    "id": "p12q5",
+    "type": "fill",
+    "stem": "仿照 Kodi did not see the fish, but Sandy did. 写「Kodi 没看见那只鸟，可 Sandy 看见了。」",
+    "answers": [
+     "Kodi did not see the bird but Sandy did",
+     "Kodi did not see the bird, but Sandy did",
+     "Kodi didn't see the bird but Sandy did"
+    ],
+    "explain": "后半句用代动词 did，不要重复 see the bird。"
+   },
+   {
+    "id": "p12q6",
+    "type": "fill",
+    "stem": "仿照 I can get it with my net. 写「我可以用我的竿够到它。」",
+    "answers": [
+     "I can get it with my rod",
+     "I can get it with my rod."
+    ],
+    "explain": "can + get + it + with + 工具。"
+   }
+  ]
+ }
+];
+
+  var KEY = "big-fish-practice-v1";
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch(e){ state = {}; }
+
+  var ALL = [];
+  PARTS.forEach(function(p){ p.items.forEach(function(q){ ALL.push(q); }); });
+
+  function norm(s){
+    return String(s == null ? "" : s)
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[.,!?;:]/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  }
+  function isCorrect(q, val){
+    var v = norm(val);
+    if (!v) return false;
+    for (var i=0;i<q.answers.length;i++){
+      if (norm(q.answers[i]) === v) return true;
+    }
+    return false;
+  }
+  function save(){
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
+  }
+
+  var app = document.getElementById("app");
+
+  function el(tag, cls){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    return e;
+  }
+
+  function renderCard(q, idx){
+    var st = state[q.id] || null;
+    var judged = st && typeof st.ok === "boolean";
+
+    var card = el("div", "card" + (judged ? (st.ok ? " ok" : " bad") : ""));
+
+    var head = el("div", "qhead");
+    var no = el("div", "no");
+    no.textContent = String(idx);
+    var stem = el("div", "stem");
+    var s = el("div");
+    s.textContent = q.stem;
+    stem.appendChild(s);
+
+    if (q.sub){
+      var sub = el("span", "zh");
+      var t = q.sub.replace(/^提示：/, "");
+      if (/^提示/.test(q.sub)){
+        var hint = el("span", "hint");
+        hint.textContent = t;
+        sub.appendChild(document.createTextNode("用上 "));
+        sub.appendChild(hint);
+      } else {
+        sub.textContent = q.sub;
+      }
+      stem.appendChild(sub);
+    }
+    head.appendChild(no);
+    head.appendChild(stem);
+    card.appendChild(head);
+
+    if (q.type === "choice"){
+      var wrap = el("div", "opts");
+      q.options.forEach(function(opt){
+        var b = el("button", "opt");
+        b.type = "button";
+        b.textContent = opt;
+        if (st && st.value === opt){
+          b.classList.add("sel");
+          if (judged) b.classList.add(st.ok ? "correct" : "wrong");
+        }
+        if (judged && !st.ok && q.answers.indexOf(opt) >= 0) b.classList.add("correct");
+        b.addEventListener("click", function(){
+          var ok = isCorrect(q, opt);
+          state[q.id] = { value: opt, ok: ok };
+          save(); redrawCard(card, q, idx); updateStats();
+        });
+        wrap.appendChild(b);
+      });
+      card.appendChild(wrap);
+
+    } else {
+      var fw = el("div", "fillwrap");
+      var input = el("input", "fill");
+      input.type = "text";
+      input.placeholder = "在这里写英文";
+      input.autocomplete = "off";
+      input.spellcheck = false;
+      input.dataset.qid = q.id;
+      input.value = st ? (st.value || "") : "";
+      if (judged) input.classList.add(st.ok ? "ok" : "bad");
+
+      var btn = el("button", "primary");
+      btn.type = "button";
+      btn.textContent = judged ? "重判" : "检查";
+
+      function judge(){
+        var v = input.value.trim();
+        if (!v) { input.focus(); return; }
+        state[q.id] = { value: v, ok: isCorrect(q, v) };
+        save(); redrawCard(card, q, idx); updateStats();
+      }
+      btn.addEventListener("click", judge);
+      input.addEventListener("keydown", function(e){
+        if (e.key === "Enter"){ e.preventDefault(); judge(); }
+      });
+      input.addEventListener("input", function(){
+        if (state[q.id] && typeof state[q.id].ok === "boolean"){
+          delete state[q.id]; save();
+          card.classList.remove("ok", "bad");
+          input.classList.remove("ok", "bad");
+          var fb = card.querySelector(".fb");
+          if (fb) fb.remove();
+          updateStats();
+        }
+      });
+      fw.appendChild(input);
+      fw.appendChild(btn);
+      card.appendChild(fw);
+    }
+
+    if (judged){
+      var fb = el("div", "fb " + (st.ok ? "ok" : "bad"));
+      if (st.ok){
+        fb.appendChild(document.createTextNode("✓ 正确"));
+      } else {
+        fb.appendChild(document.createTextNode("✗ 再想想　答案："));
+        var ans = el("span", "ans");
+        ans.textContent = q.answers[0];
+        fb.appendChild(ans);
+      }
+      if (q.explain){
+        var ex = el("span", "ex");
+        ex.textContent = q.explain;
+        fb.appendChild(ex);
+      }
+      card.appendChild(fb);
+    }
+
+    return card;
+  }
+
+  function redrawCard(oldCard, q, idx){
+    var fresh = renderCard(q, idx);
+    oldCard.parentNode.replaceChild(fresh, oldCard);
+  }
+
+  var order = {};
+  function build(){
+    app.innerHTML = "";
+    var n = 0;
+    PARTS.forEach(function(part){
+      var sec = el("section", "part");
+      var h = el("h2"); h.textContent = part.name; sec.appendChild(h);
+      var d = el("p", "pdesc"); d.textContent = part.desc; sec.appendChild(d);
+      part.items.forEach(function(q){
+        n += 1;
+        order[q.id] = n;
+        sec.appendChild(renderCard(q, n));
+      });
+      app.appendChild(sec);
+    });
+    updateStats();
+  }
+
+  function updateStats(){
+    var answered = 0, right = 0;
+    ALL.forEach(function(q){
+      var st = state[q.id];
+      if (st && typeof st.ok === "boolean"){
+        answered += 1;
+        if (st.ok) right += 1;
+      }
+    });
+    var total = ALL.length;
+    document.getElementById("score").textContent = right;
+    document.getElementById("total").textContent = total;
+    document.getElementById("pct").textContent = Math.round(answered / total * 100) + "%";
+    document.getElementById("barfill").style.width = (answered / total * 100) + "%";
+  }
+
+  document.getElementById("btnCheckAll").addEventListener("click", function(){
+    app.querySelectorAll("input.fill").forEach(function(inp){
+      var id = inp.dataset.qid;
+      if (!id) return;
+      if (state[id] && typeof state[id].ok === "boolean") return;
+      var v = inp.value.trim();
+      if (!v) return;
+      var q = null;
+      for (var i=0;i<ALL.length;i++){ if (ALL[i].id === id){ q = ALL[i]; break; } }
+      if (!q) return;
+      state[id] = { value: v, ok: isCorrect(q, v) };
+    });
+    save(); build();
+  });
+
+  document.getElementById("btnRedo").addEventListener("click", function(){
+    ALL.forEach(function(q){
+      var st = state[q.id];
+      if (st && st.ok === false) delete state[q.id];
+    });
+    save(); build();
+  });
+
+  document.getElementById("btnReset").addEventListener("click", function(){
+    if (!confirm("清空全部作答，重新开始？")) return;
+    state = {}; save(); build();
+  });
+
+  var btnE = document.getElementById("btnExport");
+  if (btnE) btnE.addEventListener("click", function(){
+    var lines = [], n = 0, done = 0, right = 0;
+    lines.push("错题导出 · " + document.title);
+    lines.push("时间：" + new Date().toLocaleString());
+    lines.push("");
+    ALL.forEach(function(q){
+      var st = state[q.id];
+      if (st && typeof st.ok === "boolean"){
+        done += 1;
+        if (st.ok) right += 1;
+        else {
+          n += 1;
+          lines.push(n + ". 【第 " + (order[q.id] || "?") + " 题】" + q.stem);
+          if (q.sub) lines.push("   提示：" + q.sub);
+          lines.push("   你的答案：" + (st.value || "（空）"));
+          lines.push("   正确答案：" + (q.answers || []).join(" / "));
+          if (q.explain) lines.push("   解析：" + q.explain);
+          lines.push("");
+        }
+      }
+    });
+    lines.push("-------");
+    lines.push("已完成 " + done + " / " + ALL.length + "，答对 " + right + "，错题 " + n + " 道。");
+    var txt = lines.join("\n");
+    var blob = new Blob([txt], {type: "text/plain;charset=utf-8"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "错题-" + document.title.replace(/[\\/:*?"<>|]/g, "-") + ".txt";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(function(){});
+    alert(n ? ("已导出 " + n + " 道错题，文件在下载目录，内容也复制到剪贴板了。") : "暂时没有做错的题。");
+  });
+
+  build();
+})();
+</script>
+</body>
+</html>

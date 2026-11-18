@@ -21,5 +21,6 @@
 | 2026-11-14 | The Truck Can Go（Read and Play，字母 T）：Put...in... 句型 + truck/tractor 对比 | `2026-11-14-The-Truck-Can-Go.html` | 52 |
 | 2026-11-14 | Hello! I'm a Spider（Read and Play，字母 S）：crawl 生词 + on/in 对比 | `2026-11-14-Hello-Im-a-Spider.html` | 52 |
 | 2026-11-14 | Hedgehogs（Animal Safari）：刺猬科普 + hoglets / ones + 四种「刺」对比 | `2026-11-14-Hedgehogs.html` | 52 |
+| 2026-11-18 | The Big Fish（长句小故事）：对话体 + 过去时 + 代动词 did + 加强题 | `2026-11-18-The-Big-Fish.html` | 51 |
 
 以后每加一课，就在这里追加一行。
